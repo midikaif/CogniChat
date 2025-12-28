@@ -1,5 +1,6 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { MdCheckCircle } from "react-icons/md";
+import { connectSocket } from "../utils/socket";
 
 const Context = createContext();
 
@@ -19,14 +20,13 @@ const ContextProvider = (props) => {
   const [settings, setSettings] = useState(false);
 
   const onSend = async (prompt, chatId) => {
+    // 1. Input Validation
+    if (!prompt.trim()) return;
+
     setLoading(true);
     setShowResult(true);
-    setUserPrompt({
-      user: {
-        chat: chatId,
-        content: prompt,
-      },
-    });
+
+    // 2. Optimistic Update (Show user message immediately)
     setPrevPrompts((prev) => [
       ...prev,
       {
@@ -36,16 +36,26 @@ const ContextProvider = (props) => {
       },
     ]);
 
-    socket.emit("ai-message", {
-      chat: chatId,
-      content: prompt,
-    });
+    // 3. Socket Safety Check
+    if (socket && socket.connected) {
+      socket.emit("ai-message", {
+        chat: chatId,
+        content: prompt,
+      });
+    } else {
+      console.error("Socket not connected. Reconnecting...");
+      setNotification("Connection lost. Retrying...");
 
+      // Emergency Reconnect Logic
+      const newSocket = connectSocket();
+      newSocket.on("connect", () => {
+        newSocket.emit("ai-message", { chat: chatId, content: prompt });
+      });
+      setSocket(newSocket);
+    }
   };
 
   const showNotification = () => {
-    setTimeout(() => setNotification(""), 2000);
-
     return (
       <div className="notification" style={{}}>
         <MdCheckCircle size={24} style={{ marginRight: 6 }} />
@@ -53,6 +63,14 @@ const ContextProvider = (props) => {
       </div>
     );
   };
+
+  // Fix for Notification clearing loop
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => setNotification(""), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
 
   const contextValue = {
     prevPrompts,
@@ -76,7 +94,7 @@ const ContextProvider = (props) => {
     setSocket,
     settings,
     setSettings,
-    showNotification
+    showNotification,
   };
 
   return (

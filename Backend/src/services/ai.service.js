@@ -12,7 +12,6 @@ async function generateResponse(content) {
     }
   });
   return response.text;
-
 }
 
 async function generateVector(content){

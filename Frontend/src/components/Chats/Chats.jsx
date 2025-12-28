@@ -3,7 +3,7 @@ import { assets } from "../../assets/assets";
 import { Context } from "../../context/ContextProvider";
 import api from "../../apis/api";
 import Welcome from "../Welcome/Welcome";
-import { io } from "socket.io-client";
+import {connectSocket} from "../../utils/socket";
 
 function Chats({ selectedChat }) {
   const {
@@ -19,7 +19,6 @@ function Chats({ selectedChat }) {
     api.get(`/api/chat/${selectedChat}`)
       .then((response) => {
         const result = response.data.chat;
-
         setPrevPrompts(result);
       })
       .catch((error) => {
@@ -28,9 +27,7 @@ function Chats({ selectedChat }) {
   }, [selectedChat, setPrevPrompts]);
 
   useEffect(() => {
-    const tempSocket = io("https://llmmodel-midikaif.onrender.com", {
-      withCredentials: true,
-    });
+    const tempSocket = connectSocket();
 
     tempSocket.on("ai-response", (message) => {
       setPrevPrompts((prev) => [
@@ -44,6 +41,10 @@ function Chats({ selectedChat }) {
     });
 
     setSocket(tempSocket);
+
+    return () => {
+      tempSocket.disconnect();
+    }
   }, [setSocket, setPrevPrompts, setLoading]);
 
   return prevPrompts.length === 0 ? (

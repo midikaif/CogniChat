@@ -37,8 +37,7 @@ function initSocketServer(httpServer) {
     console.log("New Socket connection: ", socket.id);
 
     socket.on("ai-message", async (messagePayload) => {
-        
-
+        console.log("user prompt -> ", messagePayload.content)
         const [message, vectors] = await Promise.all([
         messageModel.create({
           chat: messagePayload.chat,
@@ -59,7 +58,6 @@ function initSocketServer(httpServer) {
         },
       });
 
-
       const [memory, chatHistory] = await Promise.all([
         queryMemory({
           queryVector: vectors[0].values,
@@ -78,7 +76,7 @@ function initSocketServer(httpServer) {
       ]);
       
 
-      const stm = chatHistory.map((item) => {
+      const stm = chatHistory.reverse().map((item) => {
         return {
           role: item.role,
           parts: [{ text: item.content }],
