@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./Sidebar.css";
 import { assets } from "../../assets/assets";
-import axios from "axios";
+import api from "../../apis/api";
 import { IoIosArrowBack, IoMdSend } from "react-icons/io";
 import { Context } from "../../context/ContextProvider";
 import RecentChats from "../RecentChats/RecentChats";
@@ -27,11 +27,10 @@ function Sidebar() {
     setNotification("Chat created successfully!");
     setTimeout(() => setNotification(""), 2000);
 
-    axios
+    api
       .post(
-        "https://llmmodel-midikaif.onrender.com/api/chat",
-        { title: chatInput },
-        { withCredentials: true }
+        "/api/chat",
+        { title: chatInput }
       )
       .then((response) => {
         console.log("Chat created:", response.data);
@@ -42,10 +41,8 @@ function Sidebar() {
   };
 
   useEffect(() => {
-    axios
-      .get("https://llmmodel-midikaif.onrender.com/api/chat", {
-        withCredentials: true,
-      })
+    api
+      .get("/api/chat")
       .then((response) => {
         const { chats } = response.data;
         setChats(chats);

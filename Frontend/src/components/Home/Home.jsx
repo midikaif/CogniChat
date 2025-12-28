@@ -1,32 +1,36 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import Cookies from "js-cookie";
 import "./Home.css";
 import { assets } from "../../assets/assets";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Welcome from "../Welcome/Welcome";
 import Chats from "../Chats/Chats";
 import SearchBar from "../SearchBar/SearchBar";
 import { Context } from "../../context/ContextProvider";
+import api from "../../apis/api";
+
 
 function Home() {
   const { selectedChat, prevPrompts } = useContext(Context);
 
   const [showSignout, setShowSignout] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const location = useLocation();
   const navigate = useNavigate();
-
-  const cookies = Cookies.get("token");
 
   const resultRef = useRef(null);
 
   useEffect(() => {
-    const path = location.pathname;
-
-    if (!cookies && path !== "/login" && path !== "/signup") {
-      navigate("/login", { replace: true });
+    const checkAuth = async () => {
+      try{
+        await api.get('/api/auth/verify');
+        setIsLoading(false);
+      } catch (err){
+        console.log("Auth failed, redirecting", err);
+        navigate('login', {replace: true});
+      }
     }
-  }, [location.pathname]);
+    checkAuth();
+  }, [navigate]);
 
   useEffect(() => {
     if (resultRef.current) {
@@ -35,7 +39,6 @@ function Home() {
   }, [prevPrompts]);
 
   const handleSignout = () => {
-    Cookies.remove("token");
     setShowSignout(false);
     navigate("/login", { replace: true });
   };

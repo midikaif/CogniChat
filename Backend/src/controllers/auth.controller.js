@@ -15,7 +15,7 @@ async function registerController(req,res){
         })
     }
 
-    const hashPassword = await bcrypt.hash(password,10);
+    const hashPassword = await bcrypt.hash(password, 10);
 
     const user = await userModel.create({
         fullName: {
@@ -25,11 +25,17 @@ async function registerController(req,res){
         password: hashPassword
     })
 
+
     const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {
         expiresIn: '1d'
     });
 
-    res.cookie('token',token);
+    res.cookie('token',token, {
+        httpOnly: true,                // Prevent XSS attacks
+        secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
+        sameSite: 'strict',            // Protect against CSRF (since frontend is on same domain)
+        maxAge: 24 * 60 * 60 * 1000    // 1 Day 
+    });
 
     res.status(201).json({
         message: 'User registered successfully',
@@ -43,7 +49,7 @@ async function registerController(req,res){
 
 async function loginController(req,res){
     const {email, password} = req.body;
-
+    console.log("logincontroller");
     const user = await userModel.findOne({email});
 
     if(!user){
@@ -52,21 +58,26 @@ async function loginController(req,res){
         })
     }
 
-    const isPasswordValid = bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if(!isPasswordValid){
         return res.status(400).json({
             message: 'Invalid email or password!'
         })
     }
-    
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET,{
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
         expiresIn: '1d'
     });
 
-    res.cookie("token", token);
+    console.log("before setting cookie");
 
-
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     res.status(200).json({
         message: 'user logged in successfully',
@@ -78,8 +89,25 @@ async function loginController(req,res){
     })
 }
 
+function verifyController(req, res){
+    res.status(200).json({
+        authenticated: true,
+        user: req.user
+    })
+}
+
+function logoutController(req, res){
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+    });
+    res.status(200).json({message: "Logged out"});
+}
 
 module.exports = {
     registerController,
-    loginController
+    loginController,
+    verifyController,
+    logoutController
 }

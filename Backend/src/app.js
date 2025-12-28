@@ -10,10 +10,15 @@ const chatRoutes = require('./routes/chat.routes');
 const app = express()
 
 
-app.use(cors({
-    origin: 'http://localhost:5173',
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://llmmodel-midikaif.onrender.com",
+    ],
     credentials: true,
-}));
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname,'../public')));

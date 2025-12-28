@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import { assets } from "../../assets/assets";
 import { Context } from "../../context/ContextProvider";
-import axios from "axios";
+import api from "../../apis/api";
 import Welcome from "../Welcome/Welcome";
 import { io } from "socket.io-client";
 
@@ -16,10 +16,7 @@ function Chats({ selectedChat }) {
 
 
   useEffect(() => {
-    axios
-      .get(`https://llmmodel-midikaif.onrender.com/api/chat/${selectedChat}`, {
-        withCredentials: true,
-      })
+    api.get(`/api/chat/${selectedChat}`)
       .then((response) => {
         const result = response.data.chat;
 
@@ -28,7 +25,7 @@ function Chats({ selectedChat }) {
       .catch((error) => {
         console.error("Error fetching chat data:", error);
       });
-  }, [selectedChat]);
+  }, [selectedChat, setPrevPrompts]);
 
   useEffect(() => {
     const tempSocket = io("https://llmmodel-midikaif.onrender.com", {
@@ -47,7 +44,7 @@ function Chats({ selectedChat }) {
     });
 
     setSocket(tempSocket);
-  }, [setSocket, setPrevPrompts]);
+  }, [setSocket, setPrevPrompts, setLoading]);
 
   return prevPrompts.length === 0 ? (
     <Welcome />

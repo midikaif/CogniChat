@@ -4,7 +4,7 @@ import "./LoginSignup.css";
 import { FaUserAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
-import axios from "axios";
+import api from "../../apis/api";
 import Cookies from "js-cookie";
 import { Context } from "../../context/ContextProvider";
 
@@ -15,14 +15,14 @@ function LoginSignup() {
 
   // Determine initial action from path
 
-  useEffect(() => {
-    const cookies = Cookies.get("token");
-    const path = location.pathname;
+  // useEffect(() => {
+  //   const cookies = Cookies.get("token");
+  //   const path = location.pathname;
 
-    if (cookies && (path === "/login" || path === "/signup")) {
-      navigate("/", { replace: true });
-    }
-  }, [location.pathname]);
+  //   if (cookies && (path === "/login" || path === "/signup")) {
+  //     navigate("/", { replace: true });
+  //   }
+  // }, [location.pathname, navigate]);
 
   const getActionFromPath = (pathname) => {
     if (pathname === "/login") return "login";
@@ -41,7 +41,6 @@ function LoginSignup() {
   });
 
   const handleInput = (e) => {
-
     const { name, value } = e.target;
     if (name === "firstName" || name === "lastName") {
       setForm({
@@ -58,18 +57,9 @@ function LoginSignup() {
 
   const handleSubmit = () => {
 
-    axios
-      .post(
-        `https://llmmodel-midikaif.onrender.com/api/auth${location.pathname}`,
-        {
-          ...form,
-        },
-        {
-          withCredentials: true,
-        }
-      )
+    api.post(`/api/auth${location.pathname}`, form)
       .then((response) => {
-
+        console.log("logged in", response);
         setUser(response.data.user);
 
         navigate("/");

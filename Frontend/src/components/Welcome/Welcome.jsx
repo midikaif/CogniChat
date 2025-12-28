@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../context/ContextProvider";
 import RecentChats from "../RecentChats/RecentChats";
-import axios from "axios";
+import api from "../../apis/api";
 import Cards from "../Cards/Cards";
 import "./Welcome.css";
 
@@ -11,10 +11,8 @@ function Welcome() {
   const { user, selectedChat, notification } = useContext(Context);
 
   useEffect(() => {
-    axios
-      .get("https://llmmodel-midikaif.onrender.com/api/chat", {
-        withCredentials: true,
-      })
+    api
+      .get("/api/chat")
       .then((response) => {
         const { chats } = response.data;
         setChats(chats);
