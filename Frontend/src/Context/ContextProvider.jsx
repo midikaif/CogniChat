@@ -1,8 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import { MdCheckCircle } from "react-icons/md";
 import { connectSocket } from "../utils/socket";
-import api from "../apis/api"
-
+import api from "../apis/api";
 
 const Context = createContext();
 
@@ -20,53 +19,68 @@ const ContextProvider = (props) => {
   const [socket, setSocket] = useState(null);
   const [selectedChat, setSelectedChat] = useState(null);
   const [settings, setSettings] = useState(false);
+  const [isCreatingChat, setIsCreatingChat] = useState(false);
 
   const startChatFromWelcome = async (prompt) => {
+    setIsCreatingChat(true);
     setLoading(true);
     setShowResult(true);
-    try{
-      console.log("Sending API request for:", prompt); // Debug Log 1
-
-      const response = await api.post("api/chat", {prompt: prompt});
-      console.log("Server Response:", response.data); // <--- Add this to debug
-
-      const newChat = response.data.chat; 
-      if (!newChat) {
-          console.error("API did not return a chat object");
-          return;
-      }
-      
-      if (newChat && newChat._id) {
-        setSelectedChat(newChat._id);
-        
-        
-        setPrevPrompts((prev) => [
-      ...prev,
+    
+    setPrevPrompts([
       {
         role: "user",
-        chat: newChat._id,
         content: prompt,
+        // No 'chat' ID yet, that's okay for display
       },
     ]);
+    
+    try {
+      console.log("Sending API request for:", prompt); // Debug Log 1
 
-        setNotification("New Conversation Started");
-      
-        
-        if(socket){
-          socket.emit("ai-message", {
-          chat: newChat._id,
-          content: prompt
-        })
+      const response = await api.post("api/chat", { prompt: prompt });
+      console.log("Server Response:", response.data); // <--- Add this to debug
+
+      const newChat = response.data.chat;
+      if (!newChat) {
+        console.error("API did not return a chat object");
+        return;
       }
-    } 
-    else {
-        console.error("Critical: No chat ID returned from server", response.data);
-    }
 
-    }catch(err){
+      if (newChat && newChat._id) {
+        setIsCreatingChat(false); 
+        const initialMessage = [
+          {
+            role: "user",
+            chat: newChat._id,
+            content: prompt,
+          },
+        ];
+        
+        setPrevPrompts(initialMessage);
+        
+        setSelectedChat(newChat._id);
+        
+        console.log(prevPrompts)
+        
+        setLoading(false);
+        setNotification("New Conversation Started");
+
+        if (socket) {
+          socket.emit("ai-message", {
+            chat: newChat._id,
+            content: prompt,
+          });
+        }
+      } else {
+        console.error(
+          "Critical: No chat ID returned from server",
+          response.data
+        );
+      }
+    } catch (err) {
       console.error("Error starting chat:", err);
     }
-  }
+  };
 
   const onSend = async (prompt, chatId) => {
     // 1. Input Validation
@@ -91,6 +105,7 @@ const ContextProvider = (props) => {
         chat: chatId,
         content: prompt,
       });
+      
     } else {
       console.error("Socket not connected. Reconnecting...");
       setNotification("Connection lost. Retrying...");
@@ -145,6 +160,7 @@ const ContextProvider = (props) => {
     settings,
     setSettings,
     showNotification,
+    isCreatingChat,
   };
 
   return (

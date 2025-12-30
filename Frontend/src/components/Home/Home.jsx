@@ -5,13 +5,13 @@ import { useNavigate } from "react-router-dom";
 import Welcome from "../Welcome/Welcome";
 import Chats from "../Chats/Chats";
 import SearchBar from "../SearchBar/SearchBar";
-import { Context } from "../../context/ContextProvider";
+import { Context } from "../../Context/ContextProvider";
 import api from "../../apis/api";
 
 
 function Home() {
 
-  const { selectedChat, prevPrompts, setSelectedChat } = useContext(Context);
+  const { selectedChat, prevPrompts, setSelectedChat, isCreatingChat } = useContext(Context);
 
   const [showSignout, setShowSignout] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -99,7 +99,7 @@ function Home() {
       </div>
       <div className="main-container">
         <div className="result" ref={resultRef}>
-          {selectedChat ? (<Chats key={selectedChat} selectedChat={selectedChat} />) : (<Welcome />)}
+          {selectedChat || isCreatingChat ? (<Chats key={selectedChat} selectedChat={selectedChat} />) : (<Welcome />)}
         </div>
 
         <div className="main-bottom">

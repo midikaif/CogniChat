@@ -1,5 +1,5 @@
 import {useContext, useState} from 'react'
-import {Context} from '../../context/ContextProvider';
+import {Context} from '../../Context/ContextProvider';
 import { assets } from "../../assets/assets";
 
 

@@ -16,7 +16,8 @@ function Sidebar() {
     showNotification,
     selectedChat,
     setSelectedChat,
-    setPrevPrompts
+    setPrevPrompts,
+    isCreatingChat,
   } = useContext(Context);
 
   const [loadingList, setLoadingList] = useState(true);
@@ -36,7 +37,7 @@ function Sidebar() {
         console.error("Error fetching chat data:", error);
         setLoadingList(false);
       });
-  }, []);
+  }, [isCreatingChat]);
 
   const sendChat = (e) => {
     e.preventDefault();
@@ -49,33 +50,29 @@ function Sidebar() {
       .post("/api/chat", { prompt: chatInput })
       .then((response) => {
         console.log("Chat created:", response.data);
-        setChats(prev => [...prev, response.data.chat])
+        setChats((prev) => [...prev, response.data.chat]);
       })
       .catch((error) => {
         console.error("Error creating chat:", error);
       });
   };
 
-
-
   async function onDeleteChat(e, id) {
     e.stopPropagation();
     setChats((prevChats) => prevChats.filter((chat) => chat._id !== id));
 
-    if(selectedChat === id){
+    if (selectedChat === id) {
       setSelectedChat(null);
       setPrevPrompts([]);
     }
 
     setNotification("Chat deleted successfully!");
-    try{
-      await api
-      .delete(`/api/chat/${id}`, { withCredentials: true })
-    }catch(err){
-      console.log("Delete failed: ",err);
-
+    try {
+      await api.delete(`/api/chat/${id}`, { withCredentials: true });
+    } catch (err) {
+      console.log("Delete failed: ", err);
     }
-      
+
     showNotification("");
   }
 

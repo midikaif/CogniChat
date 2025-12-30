@@ -1,33 +1,35 @@
 import { useContext, useEffect, useState } from "react";
-import {parse} from "marked"
-import './Chats.css';
+import { parse } from "marked";
+import "./Chats.css";
 import { assets } from "../../assets/assets";
 import { Context } from "../../Context/ContextProvider";
 import api from "../../apis/api";
 import Welcome from "../Welcome/Welcome";
-import {connectSocket} from "../../utils/socket";
+import { connectSocket } from "../../utils/socket";
 import { RiRobot2Line } from "react-icons/ri";
 
-
 function Chats({ selectedChat }) {
-  const {
-    loading,
-    prevPrompts,
-    setPrevPrompts,
-    setLoading,
-    setSocket,
-  } = useContext(Context);
+  const { loading, prevPrompts, setPrevPrompts, setLoading, setSocket } =
+    useContext(Context);
 
-  const [fetching, setFetching] = useState(false)  
+  console.log("Chats rendered");
+
+  const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
-    if(selectedChat){
+    if (selectedChat) {
+      if (prevPrompts.length > 0 && prevPrompts[0].chat === selectedChat) {
+        return;
+      }
+
       setPrevPrompts([]);
       setFetching(true);
 
-      api.get(`/api/chat/${selectedChat}`)
+      api
+        .get(`/api/chat/${selectedChat}`)
         .then((response) => {
           const result = response.data.chat;
+          console.log(result);
           setPrevPrompts(result);
           setFetching(false);
         })
@@ -35,9 +37,8 @@ function Chats({ selectedChat }) {
           console.error("Error fetching chat data:", error);
           setFetching(false);
         });
-
     }
-  },[selectedChat, setPrevPrompts])
+  }, [selectedChat, setPrevPrompts]);
 
   useEffect(() => {
     const tempSocket = connectSocket();
@@ -53,32 +54,31 @@ function Chats({ selectedChat }) {
       setLoading(false);
     });
 
+
     setSocket(tempSocket);
 
     return () => {
       tempSocket.disconnect();
-    }
+    };
   }, [setSocket, setPrevPrompts, setLoading]);
 
-if (fetching) {
-  return (
-    <div
-      className="loader-container"
-      style={{ padding: "50px", width: "100%" }}
-    >
-      <div className="loader">
-        <hr style={{ width: "100%" }} />
-        <hr style={{ width: "80%" }} />
-        <hr style={{ width: "60%" }} />
+  if (fetching) {
+    return (
+      <div
+        className="loader-container"
+        style={{ padding: "50px", width: "100%" }}
+      >
+        <div className="loader">
+          <hr style={{ width: "100%" }} />
+          <hr style={{ width: "80%" }} />
+          <hr style={{ width: "60%" }} />
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-
-  return prevPrompts.length === 0 ? (
-    <Welcome />
-  ) : (
+  return (
+    prevPrompts.length > 0 &&
     prevPrompts.map((prompt, index) => (
       <div key={index}>
         {prompt.role === "user" && (
@@ -99,7 +99,7 @@ if (fetching) {
             ></div>
           </div>
         )}
-        {prevPrompts.length - 1 === index && loading && (
+        {(prevPrompts.length - 1 === index && loading) && (
           <div className="ai">
             <div className="ai-icon-container">
               <RiRobot2Line size={24} color="#5e5e5e" />

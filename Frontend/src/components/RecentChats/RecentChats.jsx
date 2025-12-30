@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Context } from "../../context/ContextProvider";
+import { Context } from "../../Context/ContextProvider";
 import { assets } from "../../assets/assets";
 import "./RecentChats.css";
 import { MdDelete } from "react-icons/md";
