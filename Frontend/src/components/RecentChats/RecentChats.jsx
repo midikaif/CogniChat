@@ -3,32 +3,14 @@ import { Context } from "../../context/ContextProvider";
 import { assets } from "../../assets/assets";
 import "./RecentChats.css";
 import { MdDelete } from "react-icons/md";
-import axios from "axios";
 
-function RecentChats({ chats }) {
+function RecentChats({ chats, onDeleteChat }) {
   const {
     selectedChat,
     setSelectedChat,
     setExtended,
-    setNotification,
-    showNotification,
   } = useContext(Context);
 
-  function onDeleteChat() {
-    setNotification("Chat deleted successfully!");
-    axios
-      .delete(
-        `https://llmmodel-midikaif.onrender.com/api/chat/${selectedChat}`,
-        { withCredentials: true }
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    showNotification();
-  }
 
   return (
     <>
@@ -44,7 +26,6 @@ function RecentChats({ chats }) {
               setSelectedChat(null);
               return;
             }
-
             setSelectedChat(chat._id);
           }}
         >
@@ -52,7 +33,7 @@ function RecentChats({ chats }) {
             <img src={assets.message_icon} alt="message icon" />
             <p>{chat.title}</p>
           </div>
-          <div className="chat-delete" onClick={() => onDeleteChat(chat._id)}>
+          <div className="chat-delete" onClick={(e) => onDeleteChat(e, chat._id)}>
             <MdDelete opacity={"0.5"} cursor={"pointer"} />
           </div>
         </div>

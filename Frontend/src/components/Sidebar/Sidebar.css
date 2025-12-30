@@ -95,7 +95,21 @@
   scale: 1.02;
 }
 
+/* Sidebar Skeleton Items */
+.skeleton-item {
+  height: 30px;
+  width: 100%;
+  background: #cfd0d1;
+  margin-bottom: 10px;
+  border-radius: 20px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
 
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
 
 
 .notification {

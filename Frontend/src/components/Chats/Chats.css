@@ -1,0 +1,47 @@
+/* Container for the whole message row */
+.ai {
+  display: flex;
+  align-items: flex-start; /* Aligns icon to top of text */
+  gap: 15px;               /* Space between icon and box */
+  margin-bottom: 20px;
+}
+
+/* The "CogniChat" Icon Style */
+.ai-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  /* Optional: Give the bot a brand color background */
+  background-color: #e8ebfa; 
+  padding: 5px;
+}
+
+/* The Message Box */
+.ai-message-box {
+  background-color: #f0f4f9; /* Subtle gray/blue - very professional */
+  padding: 12px 18px;        /* Breathing room for text */
+  border-radius: 0px 16px 16px 16px; /* "Speech Bubble" shape */
+  max-width: 80%;            /* Prevents full-width stretching */
+  line-height: 2;          /* Improves readability */
+  font-size: 15px;
+  color: #333;               /* Soft black text */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03); /* Tiny shadow for depth */
+}
+
+.user-message-box{
+  background-color: #f0f4f9; /* Subtle gray/blue - very professional */
+  padding: 12px 18px;        /* Breathing room for text */
+  border-radius: 16px 0px 16px 16px; /* "Speech Bubble" shape */
+  max-width: 80%;            /* Prevents full-width stretching */
+  line-height: 2;          /* Improves readability */
+  font-size: 15px;
+  color: #333;               /* Soft black text */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03); /* Tiny shadow for depth */
+ }
+
+/* Fix for the Markdown lists inside the box */
+.ai-message-box ul, .ai-message-box ol {
+  margin-left: 20px;
+  margin-top: 10px;
+}

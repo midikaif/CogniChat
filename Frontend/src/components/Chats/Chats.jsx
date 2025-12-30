@@ -1,9 +1,13 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
+import {parse} from "marked"
+import './Chats.css';
 import { assets } from "../../assets/assets";
-import { Context } from "../../context/ContextProvider";
+import { Context } from "../../Context/ContextProvider";
 import api from "../../apis/api";
 import Welcome from "../Welcome/Welcome";
 import {connectSocket} from "../../utils/socket";
+import { RiRobot2Line } from "react-icons/ri";
+
 
 function Chats({ selectedChat }) {
   const {
@@ -14,17 +18,26 @@ function Chats({ selectedChat }) {
     setSocket,
   } = useContext(Context);
 
+  const [fetching, setFetching] = useState(false)  
 
   useEffect(() => {
-    api.get(`/api/chat/${selectedChat}`)
-      .then((response) => {
-        const result = response.data.chat;
-        setPrevPrompts(result);
-      })
-      .catch((error) => {
-        console.error("Error fetching chat data:", error);
-      });
-  }, [selectedChat, setPrevPrompts]);
+    if(selectedChat){
+      setPrevPrompts([]);
+      setFetching(true);
+
+      api.get(`/api/chat/${selectedChat}`)
+        .then((response) => {
+          const result = response.data.chat;
+          setPrevPrompts(result);
+          setFetching(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching chat data:", error);
+          setFetching(false);
+        });
+
+    }
+  },[selectedChat, setPrevPrompts])
 
   useEffect(() => {
     const tempSocket = connectSocket();
@@ -47,6 +60,22 @@ function Chats({ selectedChat }) {
     }
   }, [setSocket, setPrevPrompts, setLoading]);
 
+if (fetching) {
+  return (
+    <div
+      className="loader-container"
+      style={{ padding: "50px", width: "100%" }}
+    >
+      <div className="loader">
+        <hr style={{ width: "100%" }} />
+        <hr style={{ width: "80%" }} />
+        <hr style={{ width: "60%" }} />
+      </div>
+    </div>
+  );
+}
+
+
   return prevPrompts.length === 0 ? (
     <Welcome />
   ) : (
@@ -55,18 +84,27 @@ function Chats({ selectedChat }) {
         {prompt.role === "user" && (
           <div className="user">
             <img src={assets.user_icon} alt="user icon" />
-            <p>{prompt.content}</p>
+            <p className="user-message-box">{prompt.content}</p>
           </div>
         )}
         {prompt.role === "model" && (
           <div className="ai">
-            <img src={assets.gemini_icon} alt="gemini icon" />
-            <p dangerouslySetInnerHTML={{ __html: prompt.content }}></p>
+            <div className="ai-icon-container">
+              <RiRobot2Line size={24} color="#5e5e5e" />
+            </div>
+            {/* <img src={assets.gemini_generated1}  alt="gemini icon" /> */}
+            <div
+              className="ai-message-box"
+              dangerouslySetInnerHTML={{ __html: parse(prompt.content) }}
+            ></div>
           </div>
         )}
         {prevPrompts.length - 1 === index && loading && (
           <div className="ai">
-            <img src={assets.gemini_icon} alt="gemini icon" />
+            <div className="ai-icon-container">
+              <RiRobot2Line size={24} color="#5e5e5e" />
+            </div>
+            {/* <img src={assets.gemini_icon} alt="gemini icon" /> */}
             <div className="loader">
               <hr />
               <hr />

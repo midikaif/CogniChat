@@ -1,26 +1,11 @@
-import { useContext, useEffect, useState } from "react";
-import { Context } from "../../context/ContextProvider";
-import RecentChats from "../RecentChats/RecentChats";
-import api from "../../apis/api";
-import Cards from "../Cards/Cards";
+import { useContext, useState } from "react";
+import { Context } from "../../Context/ContextProvider";
 import "./Welcome.css";
+import { assets } from "../../assets/assets";
+import { IoMdSend } from "react-icons/io";
 
 function Welcome() {
-  const [chats, setChats] = useState([]);
-
-  const { user, selectedChat, notification } = useContext(Context);
-
-  useEffect(() => {
-    api
-      .get("/api/chat")
-      .then((response) => {
-        const { chats } = response.data;
-        setChats(chats);
-      })
-      .catch((error) => {
-        console.error("Error fetching chat data:", error);
-      });
-  }, [notification]);
+  const { user, startChatFromWelcome } = useContext(Context);
 
   return (
     <>
@@ -30,16 +15,38 @@ function Welcome() {
         </p>
         <p>How can I help you today?</p>
       </div>
-      {!selectedChat && chats.length > 0 ? (
-        <div className="info">
-          <p>Select a chat to view the conversation</p>
-          <div className="recent-chats">
-            <RecentChats chats={chats} />
-          </div>
+      <div className="suggestion-cards">
+        {/* Optional: Quick start cards like Gemini/ChatGPT */}
+        <div
+          className="card"
+          onClick={() => startChatFromWelcome("Explain React Hooks")}
+        >
+          <p>Explain React Hooks</p>
+          <img src={assets.code_icon} alt="" />
         </div>
-      ) : (
-        <Cards />
-      )}
+        <div
+          className="card"
+          onClick={() => startChatFromWelcome("Debug this JavaScript code")}
+        >
+          <p>Debug Code</p>
+          <img src={assets.bulb_icon} alt="" />
+        </div>
+        {/* Add more cards if you want */}
+      </div>
+
+      {/* The Main Input Area */}
+      {/* <form className="welcome-search-box" onSubmit={handleSubmit}>
+        <input
+          onChange={(e) => setInput(e.target.value)}
+          value={input}
+          type="text"
+          placeholder="Enter a prompt here..."
+        />
+        <button type="submit">
+          <IoMdSend size={24} color="#5e5e5e" />
+        </button> 
+      </form>
+        */}
     </>
   );
 }

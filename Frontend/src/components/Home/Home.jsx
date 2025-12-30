@@ -10,7 +10,8 @@ import api from "../../apis/api";
 
 
 function Home() {
-  const { selectedChat, prevPrompts } = useContext(Context);
+
+  const { selectedChat, prevPrompts, setSelectedChat } = useContext(Context);
 
   const [showSignout, setShowSignout] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,6 +39,10 @@ function Home() {
     }
   }, [prevPrompts]);
 
+  useEffect(() => {
+    console.log("Home Component - selectedChat changed to:", selectedChat);
+  }, [selectedChat]);
+
   const handleSignout = () => {
     setShowSignout(false);
     navigate("/login", { replace: true });
@@ -46,7 +51,7 @@ function Home() {
   return (
     <div className="main">
       <div className="nav">
-        <p>Humen</p>
+        <p onClick={() => setSelectedChat(null)} style={{cursor:"pointer"}}>Humen</p>
         <div style={{ position: "relative" }}>
           <img
             src={assets.user_icon}
@@ -94,11 +99,11 @@ function Home() {
       </div>
       <div className="main-container">
         <div className="result" ref={resultRef}>
-          {selectedChat ? <Chats selectedChat={selectedChat} /> : <Welcome />}
+          {selectedChat ? (<Chats key={selectedChat} selectedChat={selectedChat} />) : (<Welcome />)}
         </div>
 
         <div className="main-bottom">
-          {selectedChat && <SearchBar />}
+          <SearchBar />
           <div className="bottom-info">
             Humen may display inaccurate info, including about people, so double
             check its responses. Your privacy and Humen app.

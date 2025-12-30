@@ -14,11 +14,29 @@ function Sidebar() {
     extended,
     setSettings,
     showNotification,
+    selectedChat,
+    setSelectedChat,
+    setPrevPrompts
   } = useContext(Context);
 
+  const [loadingList, setLoadingList] = useState(true);
   const [chats, setChats] = useState([]);
   const [newChat, setNewChat] = useState(false);
   const [chatInput, setChatInput] = useState("");
+
+  useEffect(() => {
+    setLoadingList(true);
+    api
+      .get("/api/chat")
+      .then((response) => {
+        setChats(response.data.chats);
+        setLoadingList(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching chat data:", error);
+        setLoadingList(false);
+      });
+  }, []);
 
   const sendChat = (e) => {
     e.preventDefault();
@@ -28,29 +46,38 @@ function Sidebar() {
     setTimeout(() => setNotification(""), 2000);
 
     api
-      .post(
-        "/api/chat",
-        { title: chatInput }
-      )
+      .post("/api/chat", { prompt: chatInput })
       .then((response) => {
         console.log("Chat created:", response.data);
+        setChats(prev => [...prev, response.data.chat])
       })
       .catch((error) => {
         console.error("Error creating chat:", error);
       });
   };
 
-  useEffect(() => {
-    api
-      .get("/api/chat")
-      .then((response) => {
-        const { chats } = response.data;
-        setChats(chats);
-      })
-      .catch((error) => {
-        console.error("Error fetching chat data:", error);
-      });
-  }, [notification]);
+
+
+  async function onDeleteChat(e, id) {
+    e.stopPropagation();
+    setChats((prevChats) => prevChats.filter((chat) => chat._id !== id));
+
+    if(selectedChat === id){
+      setSelectedChat(null);
+      setPrevPrompts([]);
+    }
+
+    setNotification("Chat deleted successfully!");
+    try{
+      await api
+      .delete(`/api/chat/${id}`, { withCredentials: true })
+    }catch(err){
+      console.log("Delete failed: ",err);
+
+    }
+      
+    showNotification("");
+  }
 
   return (
     <div className="sidebar">
@@ -105,8 +132,16 @@ function Sidebar() {
         {extended && (
           <div className="recent">
             <p className="recent-title">Recent</p>
-
-            <RecentChats chats={chats} />
+            {/* 2. LOADING LOGIC */}
+            {loadingList ? (
+              <div className="skeleton-list">
+                <div className="skeleton-item"></div>
+                <div className="skeleton-item"></div>
+                <div className="skeleton-item"></div>
+              </div>
+            ) : (
+              <RecentChats chats={chats} onDeleteChat={onDeleteChat} />
+            )}
           </div>
         )}
       </div>

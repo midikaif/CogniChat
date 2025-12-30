@@ -3,7 +3,7 @@ import "./App.css";
 import Home from "./components/Home/Home";
 import LoginSignup from "./components/LoginSignup/LoginSignup";
 import Settings from "./components/Settings/Settings";
-import Sidebar from "./components/sidebar/Sidebar";
+import Sidebar from "./components/Sidebar/Sidebar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {Context} from "./context/ContextProvider";
 
