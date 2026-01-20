@@ -5,13 +5,12 @@ import { FaUserAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import api from "../../apis/api";
-import Cookies from "js-cookie";
 import { Context } from "../../context/ContextProvider";
 
 function LoginSignup() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setUser } = useContext(Context);
+  const { setUser, setNotification, notification, showNotification, setLoading } = useContext(Context);
 
   // Determine initial action from path
 
@@ -30,7 +29,9 @@ function LoginSignup() {
   };
 
   const [action, setAction] = useState(getActionFromPath(location.pathname));
-  // Form state
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const [form, setForm] = useState({
     fullName: {
       firstName: "",
@@ -42,6 +43,9 @@ function LoginSignup() {
 
   const handleInput = (e) => {
     const { name, value } = e.target;
+
+    if (notification) setNotification("");
+
     if (name === "firstName" || name === "lastName") {
       setForm({
         ...form,
@@ -55,28 +59,43 @@ function LoginSignup() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+  e.preventDefault();
+  setIsSubmitted(true);
+  setLoading(true);
+
+  if(!e.target.checkValidity()){
+    return;
+  }
 
     api.post(`/api/auth${location.pathname}`, form)
       .then((response) => {
         console.log("logged in", response);
         setUser(response.data.user);
-
+        setLoading(false);
         navigate("/");
         // Handle successful response
       })
       .catch((error) => {
+        setNotification(error.response?.data?.message || "An error occurred");
         console.error("Error:", error);
         // Handle error response
-      });
+      })
+      .finally(() => {
+        setLoading(false);
+      })
+
   };
 
   useEffect(() => {
     setAction(getActionFromPath(location.pathname));
-  }, [location.pathname]);
+    setIsSubmitted(false);
+    setNotification("");
+  }, [location.pathname, setNotification]);
 
   return (
     <div className="container">
+      {notification && showNotification()}
       <div className="header">
         <div className="text">
           {action.charAt(0).toUpperCase() + action.slice(1)}
@@ -84,10 +103,9 @@ function LoginSignup() {
         <div className="underline"></div>
       </div>
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
+        onSubmit={handleSubmit}
+        noValidate
+        className={isSubmitted ? "was-submitted" : ""}
       >
         <div className="inputs">
           {action === "sign up" && (
@@ -97,13 +115,16 @@ function LoginSignup() {
                 type="text"
                 placeholder="First Name"
                 name="firstName"
+                required
                 value={form.fullName.firstName}
                 onChange={handleInput}
               />
+              <span className="error-message">First name required</span>
               <input
                 type="text"
                 placeholder="Last Name"
                 name="lastName"
+                required
                 value={form.fullName.lastName}
                 onChange={handleInput}
               />
@@ -115,9 +136,11 @@ function LoginSignup() {
               type="email"
               placeholder="Email"
               name="email"
+              required
               value={form.email}
               onChange={handleInput}
             />
+            <div className="error-message">Please enter a valid email</div>
           </div>
           <div className="input">
             <RiLockPasswordLine className="icon" />
@@ -125,23 +148,27 @@ function LoginSignup() {
               type="password"
               placeholder="Password"
               name="password"
+              required
+              minLength={action === "sign up" ? 6 : undefined}
               value={form.password}
               onChange={handleInput}
             />
+            <span className="error-message">
+              {action === "sign up"
+                ? "Password must be at least 6 characters"
+                : "Password required"}
+            </span>
           </div>
         </div>
         <div className="submit-container">
           <button
             type="button"
             className={action === "sign up" ? "submit" : "submit inactive"}
-            key={0}
-            onClick={() => {
-              if (action !== "sign up") {
-                navigate("/signup");
-              } else {
-                handleSubmit();
-              }
-            }}
+            onClick={() =>
+              action === "sign up"
+                ? document.forms[0].requestSubmit()
+                : navigate("/signup")
+            }
           >
             Sign Up
           </button>
@@ -149,11 +176,11 @@ function LoginSignup() {
             className={action === "login" ? "submit" : "submit inactive"}
             key={1}
             type="button"
-            onClick={() => {
+            onClick={(e) => {
               if (action !== "login") {
                 navigate("/login");
               } else {
-                handleSubmit();
+                handleSubmit(e);
               }
             }}
           >

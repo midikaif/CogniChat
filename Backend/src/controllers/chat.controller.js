@@ -6,11 +6,13 @@ const {generateResponse} = require("../services/ai.service")
 async function createChat(req, res) {
   const { prompt } = req.body;
   let title = "New Chat";
+  let content = null;
 
   try {
     if (prompt) {
       const titlePrompt = `Summarize this text into a concise chat title (max 5 words), do not use quotes: "${prompt}"`;
       title = await generateResponse(titlePrompt);
+      content = await generateResponse(prompt);
     }
 
     const newChat = await chatModel.create({
@@ -24,6 +26,7 @@ async function createChat(req, res) {
         _id: newChat._id,
         title: newChat.title,
         lastActivity: newChat.lastActivity,
+        content: content,
       },
     });
   } catch (err) {

@@ -6,6 +6,7 @@ import Settings from "./components/Settings/Settings";
 import Sidebar from "./components/Sidebar/Sidebar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {Context} from "./context/ContextProvider";
+import Loader from "./components/Loader/Loader";
 
 
 function App() {
@@ -13,21 +14,24 @@ function App() {
 
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<LoginSignup />} />
-        <Route path="/signup" element={<LoginSignup />} />
-        <Route
-          path="/"
-          element={
-<>
-            <Sidebar />
-            {settings ? <Settings/> : <Home/>}
-</>          
-          }
-        />
-      </Routes>
-    </Router>
+    <>
+      <Loader />
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginSignup />} />
+          <Route path="/signup" element={<LoginSignup />} />
+          <Route
+            path="/"
+            element={
+              <>
+                <Sidebar />
+                {settings ? <Settings /> : <Home />}
+              </>
+            }
+          />
+        </Routes>
+      </Router>
+    </>
   );
 }
 

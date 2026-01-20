@@ -11,10 +11,10 @@ import api from "../../apis/api";
 
 function Home() {
 
-  const { selectedChat, prevPrompts, setSelectedChat, isCreatingChat } = useContext(Context);
+  const { selectedChat, prevPrompts, setSelectedChat, isCreatingChat,  setLoading } = useContext(Context);
 
   const [showSignout, setShowSignout] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+
 
   const navigate = useNavigate();
 
@@ -24,7 +24,6 @@ function Home() {
     const checkAuth = async () => {
       try{
         await api.get('/api/auth/verify');
-        setIsLoading(false);
       } catch (err){
         console.log("Auth failed, redirecting", err);
         navigate('login', {replace: true});

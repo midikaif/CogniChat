@@ -13,13 +13,14 @@ const ContextProvider = (props) => {
   const [userPrompt, setUserPrompt] = useState("");
   const [prevPrompts, setPrevPrompts] = useState([]);
   const [showResult, setShowResult] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState("");
   const [extended, setExtended] = useState(false);
   const [socket, setSocket] = useState(null);
   const [selectedChat, setSelectedChat] = useState(null);
   const [settings, setSettings] = useState(false);
   const [isCreatingChat, setIsCreatingChat] = useState(false);
+  const [loading, setLoading] = useState(false);
+
 
   const startChatFromWelcome = async (prompt) => {
     setIsCreatingChat(true);
@@ -65,7 +66,7 @@ const ContextProvider = (props) => {
         setLoading(false);
         setNotification("New Conversation Started");
 
-        if (socket) {
+        if (socket && socket.connected) {
           socket.emit("ai-message", {
             chat: newChat._id,
             content: prompt,

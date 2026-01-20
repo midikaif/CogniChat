@@ -12,8 +12,6 @@ function Chats({ selectedChat }) {
   const { loading, prevPrompts, setPrevPrompts, setLoading, setSocket } =
     useContext(Context);
 
-  console.log("Chats rendered");
-
   const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
@@ -29,7 +27,6 @@ function Chats({ selectedChat }) {
         .get(`/api/chat/${selectedChat}`)
         .then((response) => {
           const result = response.data.chat;
-          console.log(result);
           setPrevPrompts(result);
           setFetching(false);
         })

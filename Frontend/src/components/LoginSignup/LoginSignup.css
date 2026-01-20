@@ -11,7 +11,9 @@
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(76, 0, 180, 0.08);
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 .main-submit-btn:hover,
 .main-submit-btn:focus {
@@ -78,6 +80,7 @@
   background-color: #fbf9f9;
   border-radius: 6px;
   box-sizing: border-box;
+  position: relative;
 }
 
 .name input {
@@ -113,8 +116,8 @@
 }
 
 .submit {
-    outline: none;
-    border: none;
+  outline: none;
+  border: none;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -131,6 +134,49 @@
 
 .inactive {
   background-color: #b3a1e6;
+}
+
+/* By default, error messages are hidden */
+.error-message {
+  display: none;
+  
+  position: absolute;
+  bottom: -22px;
+  left: 50px;
+
+  color: #a01515;
+  font-size: 12px;
+  margin-top: 4px;
+  text-align: left;
+  width: 100%;
+}
+
+form.was-submitted .input:has(input:invalid) {
+  border: 1px solid #ff4d4d;
+  background-color: #fff0f0;
+}
+
+/* Remove the border from the inner input to avoid double borders */
+form.was-submitted input:invalid {
+  border: none;
+}
+
+/*
+   ONLY when the form has class 'was-submitted', 
+   we target invalid inputs 
+*/
+
+form.was-submitted input:invalid {
+  border: 1px solid #ff4d4d;
+}
+
+/* 
+   If the input is invalid AND inside a submitted form,
+   display the sibling error message 
+*/
+
+form.was-submitted input:invalid ~ .error-message {
+  display: block;
 }
 
 /* Responsive Styles */

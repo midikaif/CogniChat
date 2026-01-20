@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { Context } from "../../Context/ContextProvider";
 import "./Welcome.css";
 import { assets } from "../../assets/assets";
