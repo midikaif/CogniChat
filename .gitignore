@@ -1,2 +1,6 @@
 node_modules
 .env
+
+# Ignore production build files
+Backend\public\assets
+Backend\public\index.html

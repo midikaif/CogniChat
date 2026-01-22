@@ -39,10 +39,6 @@ function Home() {
     }
   }, [prevPrompts]);
 
-  useEffect(() => {
-    console.log("Home Component - selectedChat changed to:", selectedChat);
-  }, [selectedChat]);
-
   const handleSignout = () => {
     setShowSignout(false);
     console.log("sign out");

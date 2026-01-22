@@ -54,7 +54,6 @@ function Chats({ selectedChat }) {
 
     // If context doesn't have a connected socket, create one (Fallback)
     if (!activeSocket || !activeSocket.connected) {
-      console.log("[Chats] No active socket found. Creating new connection...");
       activeSocket = connectSocket();
 
       socketRef.current = activeSocket;
@@ -73,7 +72,6 @@ function Chats({ selectedChat }) {
         return;
       }
 
-      console.log("[Step 8] Socket received 'ai-response':", message);
 
       setPrevPrompts((prev) => [
         ...prev,
@@ -84,7 +82,6 @@ function Chats({ selectedChat }) {
       ]);
 
       setLoadingReply(false);
-      console.log("[Step 10] LoadingReply set to false.");
     };;
 
     activeSocket.on("ai-response", handleAiResponse);

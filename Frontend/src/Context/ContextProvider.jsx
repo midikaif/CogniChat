@@ -24,7 +24,6 @@ const ContextProvider = (props) => {
   const socketRef = useRef(null);
 
   const startChatFromWelcome = async (prompt) => {
-    console.log("[Step 1] startChatFromWelcome triggered with prompt:", prompt);
     setIsCreatingChat(true);
     setShowResult(true);
     setLoadingReply(true);
@@ -36,13 +35,10 @@ const ContextProvider = (props) => {
         // No 'chat' ID yet, that's okay for display
       },
     ]);
-    console.log("[Step 2] Optimistic UI updated (User message shown)");
 
 
     try {
-      console.log("[Step 3] Sending API request to create chat ID...");
       const response = await api.post("api/chat", { prompt: prompt });
-      console.log("[Step 4] API Response received:", response.data);
 
       const newChat = response.data.chat;
       if (!newChat) {
@@ -51,7 +47,6 @@ const ContextProvider = (props) => {
       }
 
       if (newChat && newChat._id) {
-        console.log("[Step 5] Valid Chat ID received:", newChat._id);
 
         setPrevPrompts([
           {
@@ -64,9 +59,6 @@ const ContextProvider = (props) => {
         setSelectedChat(newChat._id);
         setIsCreatingChat(false);
 
-        console.log(
-          "[Step 6] SelectedChat updated and isCreatingChat set to false",
-        );
 
         // setPrevPrompts((prev) => [...prev, newChat]);
 
@@ -81,9 +73,6 @@ const ContextProvider = (props) => {
 
         // Check if we need to connect manually
         if (!socketRef.current || !socketRef.current.connected) {
-          console.log(
-            "[Step 7a] Socket was null/disconnected. Connecting now...",
-          );
           const newSocket = connectSocket(); // Connect immediately
           // 1. Save to Ref (INSTANT)
           socketRef.current = newSocket;
@@ -92,7 +81,6 @@ const ContextProvider = (props) => {
           setSocket(newSocket);
         }
 
-        console.log("[Step 7b] Emitting 'ai-message'...");
         socketRef.current.emit("ai-message", {
           chat: newChat._id,
           content: prompt,
