@@ -27,8 +27,7 @@ function Home() {
         console.log("auth verify");
       } catch (err){
         console.log("Auth failed, redirecting", err);
-        // debugger;
-        // navigate('login', {replace: true});
+        navigate('login', {replace: true});
       }
     }
     checkAuth();
@@ -102,7 +101,7 @@ function Home() {
       </div>
       <div className="main-container">
         <div className="result" ref={resultRef}>
-          {selectedChat || isCreatingChat ? (<Chats key={selectedChat} selectedChat={selectedChat} />) : (<Welcome />)}
+          {selectedChat || isCreatingChat ? (<Chats selectedChat={selectedChat} />) : (<Welcome />)}
         </div>
 
         <div className="main-bottom">

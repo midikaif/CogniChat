@@ -9,13 +9,24 @@ import { connectSocket } from "../../utils/socket";
 import { RiRobot2Line } from "react-icons/ri";
 
 function Chats({ selectedChat }) {
-  const { loadingReply, prevPrompts, setPrevPrompts, setLoading, setSocket } =
-    useContext(Context);
+  const {
+    loadingReply,
+    prevPrompts,
+    setPrevPrompts,
+    setLoading,
+    socket,
+    setSocket,
+    isCreatingChat,
+    setLoadingReply,
+    socketRef,
+  } = useContext(Context);
 
   const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
     if (selectedChat) {
+      if (isCreatingChat) return;
+
       if (prevPrompts.length > 0 && prevPrompts[0].chat === selectedChat) {
         return;
       }
@@ -35,12 +46,35 @@ function Chats({ selectedChat }) {
           setFetching(false);
         });
     }
-  }, [selectedChat, setPrevPrompts]);
+  }, [selectedChat, setPrevPrompts, isCreatingChat]);
 
   useEffect(() => {
-    const tempSocket = connectSocket();
+    // 1. Determine which socket to use
+    let activeSocket = socketRef.current;
 
-    tempSocket.on("ai-response", (message) => {
+    // If context doesn't have a connected socket, create one (Fallback)
+    if (!activeSocket || !activeSocket.connected) {
+      console.log("[Chats] No active socket found. Creating new connection...");
+      activeSocket = connectSocket();
+
+      socketRef.current = activeSocket;
+      setSocket(activeSocket); // Update Context so others use this too
+    } else {
+      console.log("[Chats] Reusing existing socket from Context.");
+    }
+
+    // 2. Attach the Listener to the ACTIVE socket
+    const handleAiResponse = (message) => {
+      // SECURITY CHECK:
+      // Even if the pipe is shared, we ensure this message belongs to THIS chat.
+      // (Optional but good practice)
+      if (selectedChat && message.chat && message.chat !== selectedChat) {
+        console.log("Ignored message for different chat:", message.chat);
+        return;
+      }
+
+      console.log("[Step 8] Socket received 'ai-response':", message);
+
       setPrevPrompts((prev) => [
         ...prev,
         {
@@ -48,15 +82,20 @@ function Chats({ selectedChat }) {
           content: message.content,
         },
       ]);
-    });
 
+      setLoadingReply(false);
+      console.log("[Step 10] LoadingReply set to false.");
+    };;
 
-    setSocket(tempSocket);
+    activeSocket.on("ai-response", handleAiResponse);
 
+    // 3. Cleanup: Remove listener ONLY. Do NOT disconnect.
     return () => {
-      tempSocket.disconnect();
+      console.log("[Chats] Cleaning up listener (Socket stays alive)");
+      activeSocket.off("ai-response", handleAiResponse);
     };
-  }, [setSocket, setPrevPrompts, setLoading]);
+  }, [selectedChat, setSocket, socketRef, setPrevPrompts, setLoadingReply]);
+  // ^ Important: depend on 'socket' so if it changes, we re-bind.
 
   if (fetching) {
     return (
@@ -95,7 +134,7 @@ function Chats({ selectedChat }) {
             ></div>
           </div>
         )}
-        {(prevPrompts.length - 1 === index && loadingReply) && (
+        {prevPrompts.length - 1 === index && loadingReply && (
           <div className="ai">
             <div className="ai-icon-container">
               <RiRobot2Line size={24} color="#5e5e5e" />

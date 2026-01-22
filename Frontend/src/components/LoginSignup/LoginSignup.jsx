@@ -69,11 +69,9 @@ function LoginSignup() {
     e.preventDefault();
     setIsSubmitted(true);
     setLoading(true);
-    console.log("#1");
     // if(!e.target.checkValidity()){
     //   return;
     // }
-    console.log("#2");
 
     api
       .post(`/api/auth${location.pathname}`, form)
