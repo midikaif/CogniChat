@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node Backend/server.js",
-    "build": "npm install && cd Frontend && npm install && npm run build",
+    "build": "npm install && cd Backend && npm install && cd ../Frontend && npm install && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky"
   },
