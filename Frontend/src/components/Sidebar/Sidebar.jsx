@@ -3,7 +3,7 @@ import "./Sidebar.css";
 import { assets } from "../../assets/assets";
 import api from "../../apis/api";
 import { IoIosArrowBack, IoMdSend } from "react-icons/io";
-import { Context } from "../../context/ContextProvider";
+import { Context } from "../../Context/ContextProvider";
 import RecentChats from "../RecentChats/RecentChats";
 
 function Sidebar() {

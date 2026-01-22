@@ -5,7 +5,7 @@ import { FaUserAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import api from "../../apis/api";
-import { Context } from "../../context/ContextProvider";
+import { Context } from "../../Context/ContextProvider";
 
 function LoginSignup() {
   const location = useLocation();

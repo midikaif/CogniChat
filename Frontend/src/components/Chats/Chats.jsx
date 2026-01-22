@@ -13,8 +13,6 @@ function Chats({ selectedChat }) {
     loadingReply,
     prevPrompts,
     setPrevPrompts,
-    setLoading,
-    socket,
     setSocket,
     isCreatingChat,
     setLoadingReply,

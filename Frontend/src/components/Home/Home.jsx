@@ -11,7 +11,7 @@ import api from "../../apis/api";
 
 function Home() {
 
-  const { selectedChat, prevPrompts, setSelectedChat, isCreatingChat,  setLoading } = useContext(Context);
+  const { selectedChat, prevPrompts, setSelectedChat, isCreatingChat } = useContext(Context);
 
   const [showSignout, setShowSignout] = useState(false);
 

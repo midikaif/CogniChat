@@ -5,7 +5,7 @@ import LoginSignup from "./components/LoginSignup/LoginSignup";
 import Settings from "./components/Settings/Settings";
 import Sidebar from "./components/Sidebar/Sidebar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import {Context} from "./context/ContextProvider";
+import {Context} from "./Context/ContextProvider";
 import Loader from "./components/Loader/Loader";
 
 
