@@ -5,7 +5,7 @@ import { assets } from "../../assets/assets";
 
 
 function SearchBar() {
-  const { onSend, selectedChat, startChatFromWelcome } = useContext(Context);
+  const { onSend, selectedChat, startChatFromWelcome, prevPrompts } = useContext(Context);
   const [input, setInput] = useState("");
 
   const handleSubmit = (e) => {
@@ -19,6 +19,7 @@ function SearchBar() {
     } else {
       // SCENARIO 2: No chat selected (Welcome Page) -> Create new chat
       startChatFromWelcome(input);
+      console.log("Prevprompts in Search Bar:", prevPrompts);
     }
 
     // Clear input

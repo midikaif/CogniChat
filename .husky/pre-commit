@@ -1,0 +1,9 @@
+# 1. Go into the frontend folder
+cd frontend
+
+# 2. Build the React app (This auto-updates backend/public thanks to your vite config)
+echo "🏗️  Building Frontend..."
+npm run build
+
+# 3. Add the updated backend assets to the specific commit you are about to make
+git add ../backend/public

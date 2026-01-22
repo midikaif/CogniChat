@@ -9,7 +9,7 @@ import { connectSocket } from "../../utils/socket";
 import { RiRobot2Line } from "react-icons/ri";
 
 function Chats({ selectedChat }) {
-  const { loading, prevPrompts, setPrevPrompts, setLoading, setSocket } =
+  const { loadingReply, prevPrompts, setPrevPrompts, setLoading, setSocket } =
     useContext(Context);
 
   const [fetching, setFetching] = useState(false);
@@ -48,7 +48,6 @@ function Chats({ selectedChat }) {
           content: message.content,
         },
       ]);
-      setLoading(false);
     });
 
 
@@ -96,7 +95,7 @@ function Chats({ selectedChat }) {
             ></div>
           </div>
         )}
-        {(prevPrompts.length - 1 === index && loading) && (
+        {(prevPrompts.length - 1 === index && loadingReply) && (
           <div className="ai">
             <div className="ai-icon-container">
               <RiRobot2Line size={24} color="#5e5e5e" />

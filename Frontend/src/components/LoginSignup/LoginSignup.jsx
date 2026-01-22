@@ -10,7 +10,13 @@ import { Context } from "../../context/ContextProvider";
 function LoginSignup() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setUser, setNotification, notification, showNotification, setLoading } = useContext(Context);
+  const {
+    setUser,
+    setNotification,
+    notification,
+    showNotification,
+    setLoading,
+  } = useContext(Context);
 
   // Determine initial action from path
 
@@ -60,20 +66,23 @@ function LoginSignup() {
   };
 
   const handleSubmit = (e) => {
-  e.preventDefault();
-  setIsSubmitted(true);
-  setLoading(true);
+    e.preventDefault();
+    setIsSubmitted(true);
+    setLoading(true);
+    console.log("#1");
+    // if(!e.target.checkValidity()){
+    //   return;
+    // }
+    console.log("#2");
 
-  if(!e.target.checkValidity()){
-    return;
-  }
-
-    api.post(`/api/auth${location.pathname}`, form)
+    api
+      .post(`/api/auth${location.pathname}`, form)
       .then((response) => {
         console.log("logged in", response);
         setUser(response.data.user);
         setLoading(false);
         navigate("/");
+
         // Handle successful response
       })
       .catch((error) => {
@@ -83,8 +92,7 @@ function LoginSignup() {
       })
       .finally(() => {
         setLoading(false);
-      })
-
+      });
   };
 
   useEffect(() => {
@@ -97,9 +105,7 @@ function LoginSignup() {
     <div className="container">
       {notification && showNotification()}
       <div className="header">
-        <div className="text">
-          {action.charAt(0).toUpperCase() + action.slice(1)}
-        </div>
+        <div className="text">{action.charAt(0) + action.slice(1)}</div>
         <div className="underline"></div>
       </div>
       <form
@@ -178,7 +184,8 @@ function LoginSignup() {
             type="button"
             onClick={(e) => {
               if (action !== "login") {
-                navigate("/login");
+                // debugger;
+                // navigate("/login");
               } else {
                 handleSubmit(e);
               }

@@ -24,13 +24,15 @@ function Home() {
     const checkAuth = async () => {
       try{
         await api.get('/api/auth/verify');
+        console.log("auth verify");
       } catch (err){
         console.log("Auth failed, redirecting", err);
-        navigate('login', {replace: true});
+        // debugger;
+        // navigate('login', {replace: true});
       }
     }
     checkAuth();
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     if (resultRef.current) {
@@ -44,7 +46,9 @@ function Home() {
 
   const handleSignout = () => {
     setShowSignout(false);
-    navigate("/login", { replace: true });
+    console.log("sign out");
+    // debugger;
+    // navigate("/login", { replace: true });
   };
 
   return (

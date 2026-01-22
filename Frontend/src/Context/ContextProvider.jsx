@@ -20,13 +20,14 @@ const ContextProvider = (props) => {
   const [settings, setSettings] = useState(false);
   const [isCreatingChat, setIsCreatingChat] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingReply, setLoadingReply] = useState(false);
 
 
   const startChatFromWelcome = async (prompt) => {
     setIsCreatingChat(true);
-    setLoading(true);
     setShowResult(true);
-    
+    setLoadingReply(true);
+
     setPrevPrompts([
       {
         role: "user",
@@ -34,6 +35,7 @@ const ContextProvider = (props) => {
         // No 'chat' ID yet, that's okay for display
       },
     ]);
+    console.log("prevPrompts", prevPrompts);
     
     try {
       console.log("Sending API request for:", prompt); // Debug Log 1
@@ -49,21 +51,24 @@ const ContextProvider = (props) => {
 
       if (newChat && newChat._id) {
         setIsCreatingChat(false); 
-        const initialMessage = [
+        
+        setPrevPrompts([
           {
             role: "user",
             chat: newChat._id,
             content: prompt,
           },
-        ];
+        ]);
         
-        setPrevPrompts(initialMessage);
+        console.log("prevPrompts", prevPrompts);
         
         setSelectedChat(newChat._id);
         
-        console.log(prevPrompts)
+        setLoadingReply(false);
+
+        console.log("New chat", newChat);
         
-        setLoading(false);
+        
         setNotification("New Conversation Started");
 
         if (socket && socket.connected) {
@@ -162,6 +167,8 @@ const ContextProvider = (props) => {
     setSettings,
     showNotification,
     isCreatingChat,
+    loadingReply,
+    setLoadingReply,
   };
 
   return (
