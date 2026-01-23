@@ -8,13 +8,11 @@ import SearchBar from "../SearchBar/SearchBar";
 import { Context } from "../../Context/ContextProvider";
 import api from "../../apis/api";
 
-
 function Home() {
-
-  const { selectedChat, prevPrompts, setSelectedChat, isCreatingChat } = useContext(Context);
+  const { selectedChat, prevPrompts, setSelectedChat, isCreatingChat } =
+    useContext(Context);
 
   const [showSignout, setShowSignout] = useState(false);
-
 
   const navigate = useNavigate();
 
@@ -22,14 +20,14 @@ function Home() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      try{
-        await api.get('/api/auth/verify');
+      try {
+        await api.get("/api/auth/verify");
         console.log("auth verify");
-      } catch (err){
+      } catch (err) {
         console.log("Auth failed, redirecting", err);
-        navigate('login', {replace: true});
+        navigate("login", { replace: true });
       }
-    }
+    };
     checkAuth();
   }, []);
 
@@ -49,7 +47,9 @@ function Home() {
   return (
     <div className="main">
       <div className="nav">
-        <p onClick={() => setSelectedChat(null)} style={{cursor:"pointer"}}>Humen</p>
+        <p onClick={() => setSelectedChat(null)} style={{ cursor: "pointer" }}>
+          CogniChat
+        </p>
         <div style={{ position: "relative" }}>
           <img
             src={assets.user_icon}
@@ -97,14 +97,18 @@ function Home() {
       </div>
       <div className="main-container">
         <div className="result" ref={resultRef}>
-          {selectedChat || isCreatingChat ? (<Chats selectedChat={selectedChat} />) : (<Welcome />)}
+          {selectedChat || isCreatingChat ? (
+            <Chats selectedChat={selectedChat} />
+          ) : (
+            <Welcome />
+          )}
         </div>
 
         <div className="main-bottom">
           <SearchBar />
           <div className="bottom-info">
-            Humen may display inaccurate info, including about people, so double
-            check its responses. Your privacy and Humen app.
+            CogniChat may display inaccurate info, including about people, so
+            double check its responses. Your privacy and CogniChat app.
           </div>
         </div>
       </div>
