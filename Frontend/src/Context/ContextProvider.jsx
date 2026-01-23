@@ -99,7 +99,7 @@ const ContextProvider = (props) => {
     if (!prompt.trim()) return;
 
     setShowResult(true);
-
+    setLoadingReply(true);
     // 2. Optimistic Update (Show user message immediately)
     setPrevPrompts((prev) => [
       ...prev,
