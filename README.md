@@ -49,7 +49,7 @@ A modern, real-time chat application powered by AI, built with React, Node.js, a
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/midikaif/chat-gpt-001.git
+git clone https://github.com/midikaif/CogniChat.git
 cd chat-gpt-001
 ```
 
@@ -218,7 +218,7 @@ This project is licensed under the ISC License - see the LICENSE file for detail
 
 ## 📧 Support
 
-For support, email: [your-email] or open an issue on GitHub.
+For support, email: [mdkaif0153@gmail.com] or open an issue on GitHub.
 
 ---
 
