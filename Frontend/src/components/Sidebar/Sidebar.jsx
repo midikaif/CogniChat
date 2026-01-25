@@ -37,7 +37,7 @@ function Sidebar() {
         console.error("Error fetching chat data:", error);
         setLoadingList(false);
       });
-  }, [isCreatingChat]);
+  }, [isCreatingChat, chats.length]);
 
   const sendChat = (e) => {
     e.preventDefault();

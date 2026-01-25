@@ -15,7 +15,7 @@ function App() {
 
   return (
     <>
-      <Loader />
+      {/* <Loader /> */}
       <Router>
         <Routes>
           <Route path="/login" element={<LoginSignup />} />
