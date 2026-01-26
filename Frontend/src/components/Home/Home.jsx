@@ -7,9 +7,10 @@ import Chats from "../Chats/Chats";
 import SearchBar from "../SearchBar/SearchBar";
 import { Context } from "../../Context/ContextProvider";
 import api from "../../apis/api";
+import LoginSignup from "../LoginSignup/LoginSignup";
 
 function Home() {
-  const { selectedChat, prevPrompts, setSelectedChat, isCreatingChat } =
+  const { selectedChat, prevPrompts, setSelectedChat, isCreatingChat, setUser, user } =
     useContext(Context);
 
   const [showSignout, setShowSignout] = useState(false);
@@ -37,11 +38,16 @@ function Home() {
     }
   }, [prevPrompts]);
 
-  const handleSignout = () => {
+  const handleSignout = async () => {
     setShowSignout(false);
-    console.log("sign out");
-    // debugger;
-    // navigate("/login", { replace: true });
+    try {
+    await api.post('/api/auth/logout');
+    // After server says OK, update frontend state
+    setUser(null); 
+    navigate('/login');
+  } catch (err) {
+    console.error("Logout failed", err);
+  }
   };
 
   return (
@@ -112,6 +118,8 @@ function Home() {
           </div>
         </div>
       </div>
+
+      {!user && <LoginSignup />}
     </div>
   );
 }

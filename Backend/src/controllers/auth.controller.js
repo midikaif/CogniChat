@@ -102,6 +102,7 @@ function logoutController(req, res){
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
     });
+    
     res.status(200).json({message: "Logged out"});
 }
 

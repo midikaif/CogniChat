@@ -1,8 +1,45 @@
+.modal-overlay{
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  /* cover everything */
+  width: 100vw;
+  height: 100vh;
+
+  /* The semi transparent background */
+  background: rgba(0, 0, 0, 0.4);
+
+  /* The blur effect */
+  backdrop-filter: blur(5px);
+
+  z-index: 99;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 70%;
+  max-width: 28rem;
+  min-height: 80vh;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .3);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  background: -webkit-linear-gradient(16deg, #4b90ff, #ff5546);
+}
+
+
+
 /* Main Submit Button Styling */
 .main-submit-btn {
   display: block;
-  margin: 24px auto 0 auto;
-  padding: 12px 48px;
+  margin: 1.5rem auto 0 auto;
+  padding: .75rem 3rem;
   background: #4c00b4;
   color: #fff;
   border: none;
@@ -29,15 +66,6 @@
   background: #222244;
   color: #fff;
 }
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100vw;
-  min-height: 100vh;
-  box-sizing: border-box;
-  background: -webkit-linear-gradient(16deg, #4b90ff, #ff5546);
-}
 
 .header {
   display: flex;
@@ -45,12 +73,12 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  margin-top: 40px;
+  margin-top: 2.5rem;
 }
 
 .text {
   color: white;
-  font-size: 4rem;
+  font-size: 2.5rem;
   font-weight: 700;
 }
 
@@ -74,9 +102,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  max-width: 400px;
-  height: 56px;
+  /* width: 100%; */
+  max-width: 100%;
+  height: 3.5rem;
   background-color: #fbf9f9;
   border-radius: 6px;
   box-sizing: border-box;
@@ -88,11 +116,11 @@
 }
 
 .name .icon {
-  font-size: 24px;
+  font-size: 1.5rem;
 }
 
 .icon {
-  margin: 0px 16px;
+  margin: 0px 1rem;
 }
 
 .input input {
@@ -103,14 +131,14 @@
   outline: none;
   color: #4c4c4c;
   font-size: 1rem;
-  padding: 0 8px;
+  padding: 0 .5rem;
   box-sizing: border-box;
 }
 
 .submit-container {
   display: flex;
   gap: 20px;
-  margin: 35px auto;
+  margin: 2.2rem auto;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -128,8 +156,8 @@
   font-size: 1.2rem;
   font-weight: 600;
   cursor: pointer;
-  padding: 10px 40px;
-  margin-bottom: 10px;
+  padding: 0.75rem 2.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .inactive {
@@ -145,8 +173,8 @@
   left: 50px;
 
   color: #a01515;
-  font-size: 12px;
-  margin-top: 4px;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
   text-align: left;
   width: 100%;
 }
@@ -180,23 +208,23 @@ form.was-submitted input:invalid ~ .error-message {
 }
 
 /* Responsive Styles */
-@media (max-width: 900px) {
+@media (max-width: 56.25em) {
   .container {
     max-width: 100vw;
-    width: 100vw;
-    padding-left: 24px;
-    padding-right: 24px;
+    width: 70%;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 37.5em) {
   .container {
     max-width: 100vw;
-    width: 100vw;
-    padding: 0 8vw;
+    width: 60%;
+    padding: 1.5rem 1rem;
   }
   .header {
-    margin-top: 24px;
+    margin-top: 1.5rem;
   }
   .text {
     font-size: 1.5rem;
@@ -215,16 +243,16 @@ form.was-submitted input:invalid ~ .error-message {
     font-size: 0.95rem;
   }
   .icon {
-    margin: 0 8px;
-    font-size: 18px;
+    margin: 0 0.5rem;
+    font-size: 1.25rem;
   }
   .input input {
     font-size: 0.95rem;
-    padding: 0 4px;
+    padding: 0 0.25rem;
   }
   .submit-container {
     gap: 10px;
-    margin: 24px auto;
+    margin: 1.5rem auto;
   }
   .submit {
     min-width: 90px;
@@ -233,7 +261,7 @@ form.was-submitted input:invalid ~ .error-message {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 25em) {
   .container {
     padding: 0 8vw;
   }
@@ -242,6 +270,6 @@ form.was-submitted input:invalid ~ .error-message {
   }
   .submit {
     font-size: 0.9rem;
-    padding: 6px 6px;
+    padding: .5rem .5rem;
   }
 }

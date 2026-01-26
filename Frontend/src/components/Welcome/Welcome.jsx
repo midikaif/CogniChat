@@ -11,12 +11,11 @@ function Welcome() {
     <>
       <div className="greet">
         <p>
-          <span>Hey, {user?.fullName.firstName || "there"}.</span>
+          <span>Hey, {user?.fullName?.firstName || "there"}.</span>
         </p>
         <p>How can I help you today?</p>
       </div>
-      <div className="suggestion-cards">
-        {/* Optional: Quick start cards like Gemini/ChatGPT */}
+      {/* <div className="suggestion-cards">
         <div
           className="card"
           onClick={() => startChatFromWelcome("Explain React Hooks")}
@@ -31,22 +30,9 @@ function Welcome() {
           <p>Debug Code</p>
           <img src={assets.bulb_icon} alt="" />
         </div>
-        {/* Add more cards if you want */}
-      </div>
+      
+      </div> */}
 
-      {/* The Main Input Area */}
-      {/* <form className="welcome-search-box" onSubmit={handleSubmit}>
-        <input
-          onChange={(e) => setInput(e.target.value)}
-          value={input}
-          type="text"
-          placeholder="Enter a prompt here..."
-        />
-        <button type="submit">
-          <IoMdSend size={24} color="#5e5e5e" />
-        </button> 
-      </form>
-        */}
     </>
   );
 }

@@ -77,7 +77,7 @@ function LoginSignup() {
       .post(`/api/auth${location.pathname}`, form)
       .then((response) => {
         console.log("logged in", response);
-        setUser(response.data.user);
+        setUser(response.data.user || "");
         setLoading(false);
         navigate("/");
 
@@ -100,100 +100,102 @@ function LoginSignup() {
   }, [location.pathname, setNotification]);
 
   return (
-    <div className="container">
-      {notification && showNotification()}
-      <div className="header">
-        <div className="text">{action.charAt(0) + action.slice(1)}</div>
-        <div className="underline"></div>
-      </div>
-      <form
-        onSubmit={handleSubmit}
-        noValidate
-        className={isSubmitted ? "was-submitted" : ""}
-      >
-        <div className="inputs">
-          {action === "sign up" && (
-            <div className="input name">
-              <FaUserAlt className="icon" />
+    <div className="modal-overlay">
+      <div className="container">
+        {notification && showNotification()}
+        <div className="header">
+          <div className="text">{action.charAt(0).toUpperCase() + action.slice(1)}</div>
+          <div className="underline"></div>
+        </div>
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className={isSubmitted ? "was-submitted" : ""}
+        >
+          <div className="inputs">
+            {action === "sign up" && (
+              <div className="input name">
+                <FaUserAlt className="icon" />
+                <input
+                  type="text"
+                  placeholder="First Name"
+                  name="firstName"
+                  required
+                  value={form.fullName.firstName}
+                  onChange={handleInput}
+                />
+                <span className="error-message">First name required</span>
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  name="lastName"
+                  required
+                  value={form.fullName.lastName}
+                  onChange={handleInput}
+                />
+              </div>
+            )}
+            <div className="input">
+              <MdEmail className="icon" />
               <input
-                type="text"
-                placeholder="First Name"
-                name="firstName"
+                type="email"
+                placeholder="Email"
+                name="email"
                 required
-                value={form.fullName.firstName}
+                value={form.email}
                 onChange={handleInput}
               />
-              <span className="error-message">First name required</span>
-              <input
-                type="text"
-                placeholder="Last Name"
-                name="lastName"
-                required
-                value={form.fullName.lastName}
-                onChange={handleInput}
-              />
+              <div className="error-message">Please enter a valid email</div>
             </div>
-          )}
-          <div className="input">
-            <MdEmail className="icon" />
-            <input
-              type="email"
-              placeholder="Email"
-              name="email"
-              required
-              value={form.email}
-              onChange={handleInput}
-            />
-            <div className="error-message">Please enter a valid email</div>
+            <div className="input">
+              <RiLockPasswordLine className="icon" />
+              <input
+                type="password"
+                placeholder="Password"
+                name="password"
+                required
+                minLength={action === "sign up" ? 6 : undefined}
+                value={form.password}
+                onChange={handleInput}
+              />
+              <span className="error-message">
+                {action === "sign up"
+                  ? "Password must be at least 6 characters"
+                  : "Password required"}
+              </span>
+            </div>
           </div>
-          <div className="input">
-            <RiLockPasswordLine className="icon" />
-            <input
-              type="password"
-              placeholder="Password"
-              name="password"
-              required
-              minLength={action === "sign up" ? 6 : undefined}
-              value={form.password}
-              onChange={handleInput}
-            />
-            <span className="error-message">
-              {action === "sign up"
-                ? "Password must be at least 6 characters"
-                : "Password required"}
-            </span>
-          </div>
-        </div>
-        <div className="submit-container">
-          <button
-            type="button"
-            className={action === "sign up" ? "submit" : "submit inactive"}
-            onClick={() =>
-              action === "sign up"
-                ? document.forms[0].requestSubmit()
-                : navigate("/signup")
-            }
-          >
-            Sign Up
-          </button>
-          <button
-            className={action === "login" ? "submit" : "submit inactive"}
-            key={1}
-            type="button"
-            onClick={(e) => {
-              if (action !== "login") {
-                // debugger;
-                // navigate("/login");
-              } else {
-                handleSubmit(e);
+          <div className="submit-container">
+            <button
+              type="button"
+              className={action === "sign up" ? "submit" : "submit inactive"}
+              onClick={() =>
+                action === "sign up"
+                  ? document.forms[0].requestSubmit()
+                  : navigate("/signup")
               }
-            }}
-          >
-            Log in
-          </button>
-          <button type="submit" style={{ display: "none" }} />
-        </div>
-      </form>
+            >
+              Sign Up
+            </button>
+            <button
+              className={action === "login" ? "submit" : "submit inactive"}
+              key={1}
+              type="button"
+              onClick={(e) => {
+                if (action !== "login") {
+                  // debugger;
+                  navigate("/login");
+                } else {
+                  handleSubmit(e);
+                }
+              }}
+            >
+              Log in
+            </button>
+            <button type="submit" style={{ display: "none" }} />
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

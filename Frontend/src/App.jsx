@@ -18,8 +18,6 @@ function App() {
       {/* <Loader /> */}
       <Router>
         <Routes>
-          <Route path="/login" element={<LoginSignup />} />
-          <Route path="/signup" element={<LoginSignup />} />
           <Route
             path="/"
             element={
@@ -28,7 +26,10 @@ function App() {
                 {settings ? <Settings /> : <Home />}
               </>
             }
-          />
+          >
+            <Route path="/login" element={<LoginSignup />} />
+            <Route path="/signup" element={<LoginSignup />} />
+          </Route>
         </Routes>
       </Router>
     </>

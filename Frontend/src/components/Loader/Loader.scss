@@ -53,7 +53,6 @@
   100% {color:#3BB2D0;}
 }
 
-/* // Main Wrapper (Replaces body tag from original code) */
 .loader-wrapper {
   position: relative;
   width: 100vw;
@@ -71,15 +70,15 @@
   border: 5px solid #1B5F70;
   border-radius: 120px;
   box-sizing: border-box;
-  z-index: 10;  /* Ensure loader sits above particles */
+  z-index: 999;  /* Ensure loader sits above particles */
 
   &:after {
     @include centre;
     content: " ";
     display: block;
-    background: #222;
+    background: #2222226c;
     transform-origin: center;
-    z-index: 0;
+    z-index: 998;
     width: 100px;
     height: 200%;
     @include animation('outerRotate2 30s infinite linear');
@@ -91,19 +90,19 @@
     height: 200px;
     color: #888;
     text-align: center;
-    border: 5px solid lighten(#1B5F70, 15%);
+    // border: 5px solid lighten(#1B5F70, 15%);
     border-radius: 100px;
     box-sizing: border-box;
-    z-index: 20;
+    z-index: 999;
     text-transform: uppercase;
 
     &:after {
       @include centre;
       content: " ";
       display: block;
-      background: #222;
+      background: #2222226c;
       transform-origin: center;
-      z-index: -1;
+      z-index: 990;
       width: 100px;
       height: 106%;
       @include animation('outerRotate1 15s infinite linear');
@@ -117,10 +116,10 @@
       width: 140px;
       height: 140px;
       text-align: center;
-      border: 5px solid lighten(#1B5F70, 25%);
+      // border: 5px solid color.scale(#1B5F70, 25%);
       border-radius: 70px;
       box-sizing: border-box;
-      z-index: 20;
+      z-index: 999;
       display: flex;       
       /* // React Fix: flexbox aligns text better than line-height hacks */
       align-items: center; 
@@ -130,9 +129,9 @@
         @include centre;
         content: " ";
         display: block;
-        background: #222;
+        background: #2222226c;
         transform-origin: center;
-        z-index: -1;
+        z-index: 990;
       }
 
       &:before {
