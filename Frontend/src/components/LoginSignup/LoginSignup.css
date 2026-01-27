@@ -21,46 +21,191 @@
 }
 
 .container {
-  width: 70%;
+  /* Keep Size & Layout same as Option 1 */
+  width: 90%;
   max-width: 28rem;
-  min-height: 80vh;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, .3);
-
+  height: auto;
+  padding: 3rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  background: -webkit-linear-gradient(16deg, #4b90ff, #ff5546);
+
+  /* The Glass Look */
+  background: rgba(255, 255, 255, 0.5); /* 75% opacity white */
+  backdrop-filter: blur(10px);           /* Strong blur inside the card */
+  -webkit-backdrop-filter: blur(10px);   /* Safari support */
+  
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.25); /* Subtle white border */
+  
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
 }
+
+/* --- 1. The Toggle Switch (Pill Shape) --- */
+.toggle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f0f0f0; /* Light grey background */
+  border-radius: 50px;
+  padding: 4px;
+  margin: 20px auto; /* Space from header */
+  width: fit-content;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.toggle-btn {
+  padding: 10px 30px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+/* The Active State (Login or Signup) */
+.toggle-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 10px rgba(118, 75, 162, 0.3);
+  font-weight: 600;
+}
+
+/* --- 2. The Bottom Helper Text --- */
+.switch-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.switch-text span {
+  color: #764ba2; /* Matches your theme */
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  margin-left: 5px;
+}
+
+.switch-text span:hover {
+  text-decoration: underline;
+}
+
+
+/* 1. The Row Wrapper: Puts items side-by-side */
+.name-row {
+  display: flex;
+  gap: 1rem;       /* Creates the gap between First and Last Name */
+  width: 100%;
+}
+
+/* 2. The Input Box Design (Glassy & Clean) */
+.input {
+  display: flex;
+  align-items: center;
+  width: 100%;     /* Fills the available space */
+  height: 3.5rem;  /* Fixed height for consistency */
+  
+  /* The "Classy" Look */
+  background: rgba(255, 255, 255, 0.9); /* High opacity white for contrast */
+  border-radius: 12px;                  /* Smooth rounded corners */
+  border: 1px solid transparent;        /* Placeholder for focus border */
+  
+  /* Subtle inner shadow for depth */
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  
+  transition: all 0.3s ease;
+  position: relative; /* For error message positioning */
+}
+
+/* 3. The Focus Effect (Industry Standard) */
+/* When user clicks, the border lights up */
+.input:focus-within {
+  background: #ffffff;
+  border-color: #764ba2; /* Matches your theme color */
+  box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1); /* Subtle glow ring */
+}
+
+/* 4. The actual <input> tag styling */
+.input input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: #333;
+  padding: 0 10px 0 5px; /* Spacing from the icon */
+  font-weight: 500;
+}
+
+/* 5. Icon Styling */
+.icon {
+  color: #888;
+  margin-left: 15px; /* Spacing from left wall */
+  font-size: 1.1rem;
+  min-width: 20px;   /* Prevents squashing */
+}
+
+/* 6. Active Icon Color */
+.input:focus-within .icon {
+  color: #764ba2; /* Icon lights up when typing */
+}
+
 
 
 
 /* Main Submit Button Styling */
-.main-submit-btn {
+.main-submit-btn,
+.submit {
+  /* Layout */
   display: block;
   margin: 1.5rem auto 0 auto;
-  padding: .75rem 3rem;
-  background: #4c00b4;
-  color: #fff;
-  border: none;
+  padding: 0.8rem 3.5rem; /* Slightly wider for elegance */
   border-radius: 50px;
-  font-size: 1.2rem;
-  font-weight: 600;
+  border: none;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(76, 0, 180, 0.08);
-  transition:
-    background 0.2s,
-    color 0.2s;
-}
-.main-submit-btn:hover,
-.main-submit-btn:focus {
-  background: #3c009d;
+  
+  /* Typography */
   color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px; /* Adds a premium feel */
+  
+  /* THE MAGIC: Subtle Gradient instead of flat purple */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-size: 200% auto; /* Prepared for hover animation */
+  
+  /* The "Glow" Shadow (Colored, not black) */
+  box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4); 
+  
+  transition: all 0.3s ease;
 }
+
+/* Hover Effect: Lifts up and intensifies */
+.main-submit-btn:hover,
+.submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(118, 75, 162, 0.6);
+  background-position: right center; /* Subtle shift in gradient */
+}
+
+/* 2. The Inactive Button (Ghost Style) */
+/* When the user is on "Login", the "Signup" button should fade back */
+.submit.inactive {
+  background: transparent;
+  color: #2e2e2ea1; /* Subtle grey */
+  border: 1px solid #6b6b6b;
+  box-shadow: none;
+  font-weight: 500;
+}
+
 .container.dark .main-submit-btn {
   background: #333366;
   color: #fff;
 }
+
 .container.dark .main-submit-btn:hover,
 .container.dark .main-submit-btn:focus {
   background: #222244;

@@ -18,17 +18,6 @@ function LoginSignup() {
     setLoading,
   } = useContext(Context);
 
-  // Determine initial action from path
-
-  // useEffect(() => {
-  //   const cookies = Cookies.get("token");
-  //   const path = location.pathname;
-
-  //   if (cookies && (path === "/login" || path === "/signup")) {
-  //     navigate("/", { replace: true });
-  //   }
-  // }, [location.pathname, navigate]);
-
   const getActionFromPath = (pathname) => {
     if (pathname === "/login") return "login";
     return "sign up";
@@ -93,6 +82,15 @@ function LoginSignup() {
       });
   };
 
+  // Helper to switch modes easily
+  const toggleMode = () => {
+    if (action === "login") {
+      navigate("/signup");
+    } else {
+      navigate("/login");
+    }
+  };
+
   useEffect(() => {
     setAction(getActionFromPath(location.pathname));
     setIsSubmitted(false);
@@ -104,9 +102,31 @@ function LoginSignup() {
       <div className="container">
         {notification && showNotification()}
         <div className="header">
-          <div className="text">{action.charAt(0).toUpperCase() + action.slice(1)}</div>
+          {/* <div className="text">{action.charAt(0).toUpperCase() + action.slice(1)}</div>
+          <div className="underline"></div> */}
+
+          <div className="text">
+            {action === "login" ? "Welcome Back" : "Create Account"}
+          </div>
           <div className="underline"></div>
         </div>
+
+        {/* The Toggle Switch */}
+        {/* <div className="toggle-container">
+          <div
+            className={`toggle-btn ${action === "login" ? "active" : ""}`}
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </div>
+          <div
+            className={`toggle-btn ${action === "sign up" ? "active" : ""}`}
+            onClick={() => navigate("/signup")}
+          >
+            Sign Up
+          </div>
+        </div> */}
+
         <form
           onSubmit={handleSubmit}
           noValidate
@@ -114,25 +134,33 @@ function LoginSignup() {
         >
           <div className="inputs">
             {action === "sign up" && (
-              <div className="input name">
-                <FaUserAlt className="icon" />
-                <input
-                  type="text"
-                  placeholder="First Name"
-                  name="firstName"
-                  required
-                  value={form.fullName.firstName}
-                  onChange={handleInput}
-                />
+              <div className="name-row">
+                {/* 2. First Name Box */}
+                <div className="input">
+                  <FaUserAlt className="icon" />
+                  <input
+                    type="text"
+                    placeholder="First Name"
+                    name="firstName"
+                    required
+                    value={form.fullName.firstName}
+                    onChange={handleInput}
+                  />
+                </div>
+
+                {/* 3. Last Name Box */}
+                <div className="input">
+                  <FaUserAlt className="icon" />
+                  <input
+                    type="text"
+                    placeholder="Last Name"
+                    name="lastName"
+                    required
+                    value={form.fullName.lastName}
+                    onChange={handleInput}
+                  />
+                </div>
                 <span className="error-message">First name required</span>
-                <input
-                  type="text"
-                  placeholder="Last Name"
-                  name="lastName"
-                  required
-                  value={form.fullName.lastName}
-                  onChange={handleInput}
-                />
               </div>
             )}
             <div className="input">
@@ -165,7 +193,8 @@ function LoginSignup() {
               </span>
             </div>
           </div>
-          <div className="submit-container">
+
+          {/* <div className="submit-container">
             <button
               type="button"
               className={action === "sign up" ? "submit" : "submit inactive"}
@@ -193,6 +222,19 @@ function LoginSignup() {
               Log in
             </button>
             <button type="submit" style={{ display: "none" }} />
+          </div> */}
+
+          {/* 2. NEW: Single Submit Button */}
+          <button type="submit" className="main-submit-btn">
+            {action === "login" ? "Login" : "Sign Up"}
+          </button>
+
+          {/* 3. NEW: Bottom Helper Text */}
+          <div className="switch-text">
+            {action === "login" ? "Not signed up?" : "Already have an account?"}
+            <span onClick={toggleMode}>
+              {action === "login" ? "Sign up now" : "Login here"}
+            </span>
           </div>
         </form>
       </div>
