@@ -1,3 +1,22 @@
+/* Sidebar.css */
+
+/* When the user is on the Settings page, this class is added automatically */
+.active-link {
+  background-color: #e2e6eb; /* Light grey background */
+  border-radius: 50px;
+  color: #000;
+  font-weight: 600;
+}
+
+/* Ensure the link doesn't look like a blue internet link */
+a {
+  text-decoration: none;
+  color: inherit;
+  width: 100%; /* Ensure click area fills the sidebar width */
+}
+
+
+
 .sidebar {
   min-height: 100vh;
   display: inline-flex;

@@ -1,19 +1,22 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import "./Home.css";
-import { assets } from "../../assets/assets";
+import { useContext, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import "./Home.css";
 import Welcome from "../Welcome/Welcome";
 import Chats from "../Chats/Chats";
 import SearchBar from "../SearchBar/SearchBar";
 import { Context } from "../../Context/ContextProvider";
 import api from "../../apis/api";
-import LoginSignup from "../LoginSignup/LoginSignup";
 
 function Home() {
-  const { selectedChat, prevPrompts, setSelectedChat, isCreatingChat, setUser, user } =
-    useContext(Context);
-
-  const [showSignout, setShowSignout] = useState(false);
+  const {
+    selectedChat,
+    prevPrompts,
+    isCreatingChat,
+    loadingReply,
+    user,
+    setLoading,
+  } = useContext(Context);
 
   const navigate = useNavigate();
 
@@ -21,6 +24,9 @@ function Home() {
 
   useEffect(() => {
     const checkAuth = async () => {
+      if (user) {
+        return;
+      }
       try {
         await api.get("/api/auth/verify");
         console.log("auth verify");
@@ -29,78 +35,18 @@ function Home() {
         navigate("login", { replace: true });
       }
     };
+
     checkAuth();
-  }, []);
+  }, [navigate, user, setLoading]);
 
   useEffect(() => {
     if (resultRef.current) {
       resultRef.current.scrollTop = resultRef.current.scrollHeight;
     }
-  }, [prevPrompts]);
-
-  const handleSignout = async () => {
-    setShowSignout(false);
-    try {
-    await api.post('/api/auth/logout');
-    // After server says OK, update frontend state
-    setUser(null); 
-    navigate('/login');
-  } catch (err) {
-    console.error("Logout failed", err);
-  }
-  };
+  }, [prevPrompts, loadingReply]);
 
   return (
     <div className="main">
-      <div className="nav">
-        <p onClick={() => setSelectedChat(null)} style={{ cursor: "pointer" }}>
-          CogniChat
-        </p>
-        <div style={{ position: "relative" }}>
-          <img
-            src={assets.user_icon}
-            alt="user icon"
-            style={{ cursor: "pointer" }}
-            onClick={() => setShowSignout((prev) => !prev)}
-          />
-          {showSignout && (
-            <div
-              style={{
-                position: "absolute",
-                top: "110%",
-                right: 0,
-                background: "#fff",
-                border: "1px solid #eee",
-                borderRadius: "8px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                padding: "12px 10px",
-                zIndex: 10,
-                minWidth: "120px",
-                textAlign: "center",
-              }}
-            >
-              <p style={{ margin: 0, color: "#3c009d", fontWeight: 500 }}>
-                Sign out?
-              </p>
-              <button
-                style={{
-                  marginTop: "10px",
-                  padding: "6px 18px",
-                  borderRadius: "6px",
-                  border: "none",
-                  background: "#4b90ff",
-                  color: "#fff",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                }}
-                onClick={handleSignout}
-              >
-                Sign out
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
       <div className="main-container">
         <div className="result" ref={resultRef}>
           {selectedChat || isCreatingChat ? (
@@ -118,8 +64,7 @@ function Home() {
           </div>
         </div>
       </div>
-
-      {!user && <LoginSignup />}
+      <Outlet />
     </div>
   );
 }

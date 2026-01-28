@@ -16,6 +16,7 @@ function LoginSignup() {
     notification,
     showNotification,
     setLoading,
+    loading,
   } = useContext(Context);
 
   const getActionFromPath = (pathname) => {
@@ -96,6 +97,11 @@ function LoginSignup() {
     setIsSubmitted(false);
     setNotification("");
   }, [location.pathname, setNotification]);
+
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <div className="modal-overlay">

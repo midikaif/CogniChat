@@ -129,7 +129,8 @@ const ContextProvider = (props) => {
     }
   };
 
-  const showNotification = () => {
+  const showNotification = (e) => {
+    console.log(e);
     return (
       <div className="notification" style={{}}>
         <MdCheckCircle size={24} style={{ marginRight: 6 }} />

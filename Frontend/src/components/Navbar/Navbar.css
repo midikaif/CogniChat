@@ -1,0 +1,114 @@
+/* --- 1. Main Navbar Container (Glassmorphism + Fixed) --- */
+
+/* src/components/Navbar/Navbar.css */
+
+.nav {
+  /* No position fixed needed anymore! */
+  width: 100%;
+  padding: 15px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  /* Keep the glass effect if you like */
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid #eee;
+}
+
+/* --- 2. Logo Styling --- */
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  letter-spacing: -0.5px; /* Tighter tracking looks more premium */
+
+  /* Optional: Add a subtle gradient text effect */
+  background: linear-gradient(90deg, #4b90ff, #ff5546);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* --- 3. User Icon Container --- */
+.nav-user-container {
+  position: relative; /* Needed for absolute positioning of dropdown */
+  display: flex;
+  align-items: center;
+}
+
+.user-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.user-icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* --- 4. The Dropdown Card (Minimalist) --- */
+.profile-dropdown {
+  position: absolute;
+  top: 55px; /* Pushes it below the icon */
+  right: 0;
+  width: 140px;
+  z-index: 100;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1rem;
+
+  /* Soft Shadow for "Floating" effect */
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+
+  /* Animation: Slide down & Fade in */
+  animation: fadeIn 0.2s ease-out;
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-text {
+  margin: 0 0 12px 0;
+  color: #555;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* --- 5. Sign Out Button --- */
+.signout-btn {
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  border-radius: 8px;
+  background: #f5f5f5; /* Light grey default */
+  color: #333;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.signout-btn:hover {
+  background: #ff5546; /* Warning color on hover */
+  color: white;
+  transform: translateY(-1px);
+}

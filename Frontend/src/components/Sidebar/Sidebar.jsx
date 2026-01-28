@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import "./Sidebar.css";
 import { assets } from "../../assets/assets";
 import api from "../../apis/api";
@@ -12,7 +13,6 @@ function Sidebar() {
     setNotification,
     setExtended,
     extended,
-    setSettings,
     showNotification,
     selectedChat,
     setSelectedChat,
@@ -142,8 +142,8 @@ function Sidebar() {
           </div>
         )}
       </div>
-      {notification && showNotification()}
-      <div className="bottom">
+      {/* {notification && showNotification()} */}
+      {/* <div className="bottom">
         <div
           className="bottom-item recent-entry"
           onClick={() => {
@@ -164,6 +164,34 @@ function Sidebar() {
           <img src={assets.setting_icon} alt="setting icon" />
           {extended && <p>Settings</p>}
         </div>
+      </div> */}
+
+      <div className="bottom">
+        {/* --- CHANGE 1: Help Button --- */}
+        <div className="bottom-item recent-entry">
+          <img src={assets.question_icon} alt="" />
+          {extended ? <p>Help</p> : null}
+        </div>
+
+        {/* --- CHANGE 2: Activity Button --- */}
+        <div className="bottom-item recent-entry">
+          <img src={assets.history_icon} alt="" />
+          {extended ? <p>Activity</p> : null}
+        </div>
+
+        {/* --- CHANGE 3: Settings Button --- */}
+        {/* We wrap the div in NavLink so it behaves like a real link */}
+        <NavLink
+          to="/settings"
+          className={({ isActive }) =>
+            isActive
+              ? "bottom-item recent-entry active-link"
+              : "bottom-item recent-entry"
+          }
+        >
+          <img src={assets.setting_icon} alt="" />
+          {extended ? <p>Settings</p> : null}
+        </NavLink>
       </div>
     </div>
   );

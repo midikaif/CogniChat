@@ -1,0 +1,21 @@
+/* src/layouts/MainLayout.css */
+
+.app-container {
+  display: flex;
+  width: 100vw;
+  /* Use 'dvh' (Dynamic Viewport Height) for mobile browser support */
+  height: 100dvh; 
+  background-color: #fff;
+}
+
+.main-content {
+  /* 1. Make this a Flex Column */
+  display: flex;
+  flex-direction: column;
+  
+  /* 2. Take up remaining width next to sidebar */
+  flex: 1; 
+  
+  /* 3. No scrolling on the PARENT. We scroll inside the child. */
+  overflow: hidden; 
+}

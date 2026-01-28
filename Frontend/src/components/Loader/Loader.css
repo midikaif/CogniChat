@@ -1,153 +1,93 @@
-@keyframes outerRotate1 {
-  0% {
-    transform: translate(-50%, -50%) rotate(0);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-@keyframes outerRotate2 {
-  0% {
-    transform: translate(-50%, -50%) rotate(0);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(-360deg);
-  }
-}
-@keyframes textColour {
-  0% {
-    color: #fff;
-  }
-  100% {
-    color: #3BB2D0;
-  }
-}
-.loader-wrapper {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  background: #222;
-  overflow: hidden;
-  /* Prevents scrollbars during animation */
-  font-family: "Open Sans", sans-serif;
+.loader {
+    background: #00000025;
+    /* background: radial-gradient(#222, #000); */
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 99999;
 }
 
-.e-loadholder {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 240px;
-  height: 240px;
-  border: 5px solid #1B5F70;
-  border-radius: 120px;
-  box-sizing: border-box;
-  z-index: 999; /* Ensure loader sits above particles */
-}
-.e-loadholder:after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  content: " ";
-  display: block;
-  background: rgba(34, 34, 34, 0.4235294118);
-  transform-origin: center;
-  z-index: 998;
-  width: 100px;
-  height: 200%;
-  animation: outerRotate2 30s infinite linear;
-}
-.e-loadholder .m-loader {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200px;
-  height: 200px;
-  color: #888;
-  text-align: center;
-  border-radius: 100px;
-  box-sizing: border-box;
-  z-index: 999;
-  text-transform: uppercase;
-}
-.e-loadholder .m-loader:after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  content: " ";
-  display: block;
-  background: rgba(34, 34, 34, 0.4235294118);
-  transform-origin: center;
-  z-index: 990;
-  width: 100px;
-  height: 106%;
-  animation: outerRotate1 15s infinite linear;
-}
-.e-loadholder .m-loader .e-text {
-  font-size: 14px;
-  font-size: 1.4rem;
-  line-height: 130px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: textColour 1s alternate linear infinite;
-  display: block;
-  width: 140px;
-  height: 140px;
-  text-align: center;
-  border-radius: 70px;
-  box-sizing: border-box;
-  z-index: 999;
-  display: flex;
-  /* // React Fix: flexbox aligns text better than line-height hacks */
-  align-items: center;
-  justify-content: center;
-}
-.e-loadholder .m-loader .e-text:before, .e-loadholder .m-loader .e-text:after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  content: " ";
-  display: block;
-  background: rgba(34, 34, 34, 0.4235294118);
-  transform-origin: center;
-  z-index: 990;
-}
-.e-loadholder .m-loader .e-text:before {
-  width: 110%;
-  height: 40px;
-  animation: outerRotate2 3.5s infinite linear;
-}
-.e-loadholder .m-loader .e-text:after {
-  width: 40px;
-  height: 110%;
-  animation: outerRotate1 8s infinite linear;
+.loader-inner {
+    bottom: 0;
+    height: 60px;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100px;
 }
 
-/* Styles for the Particle Components */
-#particleCanvas-White {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 50%;
-  opacity: 0.1;
-  pointer-events: none;
-  /* Allows clicks to pass through if needed */
+.loader-line-wrap {
+    animation: 
+    spin 2000ms cubic-bezier(.175, .885, .32, 1.275) infinite
+  ;
+    box-sizing: border-box;
+    height: 50px;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    transform-origin: 50% 100%;
+    width: 100px;
+}
+.loader-line {
+    border: 4px solid transparent;
+    border-radius: 100%;
+    box-sizing: border-box;
+    height: 100px;
+    left: 0;
+    margin: 0 auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100px;
+}
+.loader-line-wrap:nth-child(1) { animation-delay: -50ms; }
+.loader-line-wrap:nth-child(2) { animation-delay: -100ms; }
+.loader-line-wrap:nth-child(3) { animation-delay: -150ms; }
+.loader-line-wrap:nth-child(4) { animation-delay: -200ms; }
+.loader-line-wrap:nth-child(5) { animation-delay: -250ms; }
+
+.loader-line-wrap:nth-child(1) .loader-line {
+    border-color: #ff5546;
+    height: 90px;
+    width: 90px;
+    top: 7px;
+}
+.loader-line-wrap:nth-child(2) .loader-line {
+    border-color: #4b90ff ;
+    height: 76px;
+    width: 76px;
+    top: 14px;
+}
+.loader-line-wrap:nth-child(3) .loader-line {
+    border-color: #ff5546;
+    height: 62px;
+    width: 62px;
+    top: 21px;
+}
+.loader-line-wrap:nth-child(4) .loader-line {
+    border-color: #4b90ff;
+    height: 48px;
+    width: 48px;
+    top: 28px;
+}
+.loader-line-wrap:nth-child(5) .loader-line {
+    border-color: #ff5546;
+    height: 34px;
+    width: 34px;
+    top: 35px;
 }
 
-#particleCanvas-Blue {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 300px;
-  height: 300px;
-  pointer-events: none;
-}/*# sourceMappingURL=Loader.css.map */
+@keyframes spin {
+    0%, 15% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

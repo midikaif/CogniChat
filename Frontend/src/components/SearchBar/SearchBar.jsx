@@ -1,7 +1,7 @@
 import {useContext, useState} from 'react'
 import {Context} from '../../Context/ContextProvider';
 import { assets } from "../../assets/assets";
-
+import './SearchBar.css';
 
 
 function SearchBar() {
