@@ -151,7 +151,6 @@
   /* Just let Flexbox put it at the bottom */
   padding: 20px;
   background: #fff; /* Ensure background covers content behind it */
-
 }
 
 @keyframes loader {

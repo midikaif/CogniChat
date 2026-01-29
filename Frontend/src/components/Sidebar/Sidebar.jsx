@@ -18,6 +18,7 @@ function Sidebar() {
     setSelectedChat,
     setPrevPrompts,
     isCreatingChat,
+    user
   } = useContext(Context);
 
   const [loadingList, setLoadingList] = useState(true);
@@ -26,6 +27,9 @@ function Sidebar() {
   const [chatInput, setChatInput] = useState("");
 
   useEffect(() => {
+    if(!user){
+      return;
+    }
     setLoadingList(true);
     api
       .get("/api/chat")
@@ -37,7 +41,7 @@ function Sidebar() {
         console.error("Error fetching chat data:", error);
         setLoadingList(false);
       });
-  }, [isCreatingChat, chats.length]);
+  }, [isCreatingChat, chats.length, user]);
 
   const sendChat = (e) => {
     e.preventDefault();
@@ -142,29 +146,8 @@ function Sidebar() {
           </div>
         )}
       </div>
-      {/* {notification && showNotification()} */}
-      {/* <div className="bottom">
-        <div
-          className="bottom-item recent-entry"
-          onClick={() => {
-            setNotification("Read the DOCS!");
-            showNotification();
-          }}
-        >
-          <img src={assets.question_icon} alt="question icon" />
-          {extended && <p>Help</p>}
-        </div>
 
-        <div
-          className="bottom-item recent-entry"
-          onClick={() => {
-            setSettings((prev) => !prev);
-          }}
-        >
-          <img src={assets.setting_icon} alt="setting icon" />
-          {extended && <p>Settings</p>}
-        </div>
-      </div> */}
+      {notification && user && showNotification()}
 
       <div className="bottom">
         {/* --- CHANGE 1: Help Button --- */}

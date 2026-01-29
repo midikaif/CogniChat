@@ -23,9 +23,9 @@
 .container {
   /* Keep Size & Layout same as Option 1 */
   width: 90%;
-  max-width: 28rem;
+  max-width: 40rem;
   height: auto;
-  padding: 3rem 2rem;
+  padding: 3rem 4rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -42,66 +42,35 @@
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
 }
 
-/* --- 1. The Toggle Switch (Pill Shape) --- */
-.toggle-container {
+
+.header {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  background: #f0f0f0; /* Light grey background */
-  border-radius: 50px;
-  padding: 4px;
-  margin: 20px auto; /* Space from header */
-  width: fit-content;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+  gap: 10px;
+  width: 100%;
+  margin-top: 2.5rem;
 }
 
-.toggle-btn {
-  padding: 10px 30px;
-  border-radius: 50px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #666;
-  transition: all 0.3s ease;
-}
-
-/* The Active State (Login or Signup) */
-.toggle-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.text {
   color: white;
-  box-shadow: 0 4px 10px rgba(118, 75, 162, 0.3);
-  font-weight: 600;
-}
-
-/* --- 2. The Bottom Helper Text --- */
-.switch-text {
-  text-align: center;
-  margin-top: 1.5rem;
-  font-size: 0.95rem;
-  color: #555;
-}
-
-.switch-text span {
-  color: #764ba2; /* Matches your theme */
+  font-size: 2.5rem;
   font-weight: 700;
-  cursor: pointer;
-  text-decoration: none;
-  margin-left: 5px;
 }
 
-.switch-text span:hover {
-  text-decoration: underline;
+.underline {
+  width: 40px;
+  height: 5px;
+  background: #3c009d;
+  border-radius: 9px;
 }
 
-
-/* 1. The Row Wrapper: Puts items side-by-side */
 .name-row {
   display: flex;
   gap: 1rem;       /* Creates the gap between First and Last Name */
   width: 100%;
 }
 
-/* 2. The Input Box Design (Glassy & Clean) */
 .input {
   display: flex;
   align-items: center;
@@ -120,45 +89,61 @@
   position: relative; /* For error message positioning */
 }
 
-/* 3. The Focus Effect (Industry Standard) */
-/* When user clicks, the border lights up */
 .input:focus-within {
   background: #ffffff;
-  border-color: #764ba2; /* Matches your theme color */
+  border-color: #764ba2; 
   box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1); /* Subtle glow ring */
 }
 
-/* 4. The actual <input> tag styling */
 .input input {
+  height: 100%;
   width: 100%;
   background: transparent;
   border: none;
   outline: none;
+  color: #4c4c4c;
   font-size: 1rem;
-  color: #333;
-  padding: 0 10px 0 5px; /* Spacing from the icon */
+  padding: 0 .5rem;
+  box-sizing: border-box;
   font-weight: 500;
 }
 
-/* 5. Icon Styling */
+.input:focus-within .icon {
+  color: #764ba2; /* Icon lights up when typing */
+}
+
+.inputs {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+}
+
+.input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* width: 100%; */
+  max-width: 100%;
+  height: 3.5rem;
+  background-color: #fbf9f9;
+  border-radius: 6px;
+  box-sizing: border-box;
+  position: relative;
+}
+
 .icon {
   color: #888;
+  margin: 0px 1rem;
   margin-left: 15px; /* Spacing from left wall */
   font-size: 1.1rem;
   min-width: 20px;   /* Prevents squashing */
 }
 
-/* 6. Active Icon Color */
-.input:focus-within .icon {
-  color: #764ba2; /* Icon lights up when typing */
-}
-
-
-
-
 /* Main Submit Button Styling */
-.main-submit-btn,
-.submit {
+.main-submit-btn{
   /* Layout */
   display: block;
   margin: 1.5rem auto 0 auto;
@@ -184,129 +169,29 @@
 }
 
 /* Hover Effect: Lifts up and intensifies */
-.main-submit-btn:hover,
-.submit:hover {
+.main-submit-btn:hover{
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(118, 75, 162, 0.6);
   background-position: right center; /* Subtle shift in gradient */
 }
 
-/* 2. The Inactive Button (Ghost Style) */
-/* When the user is on "Login", the "Signup" button should fade back */
-.submit.inactive {
-  background: transparent;
-  color: #2e2e2ea1; /* Subtle grey */
-  border: 1px solid #6b6b6b;
-  box-shadow: none;
-  font-weight: 500;
+.switch-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+  color: #555;
 }
 
-.container.dark .main-submit-btn {
-  background: #333366;
-  color: #fff;
-}
-
-.container.dark .main-submit-btn:hover,
-.container.dark .main-submit-btn:focus {
-  background: #222244;
-  color: #fff;
-}
-
-.header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  margin-top: 2.5rem;
-}
-
-.text {
-  color: white;
-  font-size: 2.5rem;
+.switch-text span {
+  color: #764ba2; /* Matches your theme */
   font-weight: 700;
-}
-
-.underline {
-  width: 40px;
-  height: 5px;
-  background: #3c009d;
-  border-radius: 9px;
-}
-
-.inputs {
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 25px;
-}
-
-.input {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* width: 100%; */
-  max-width: 100%;
-  height: 3.5rem;
-  background-color: #fbf9f9;
-  border-radius: 6px;
-  box-sizing: border-box;
-  position: relative;
-}
-
-.name input {
-  width: 100% !important;
-}
-
-.name .icon {
-  font-size: 1.5rem;
-}
-
-.icon {
-  margin: 0px 1rem;
-}
-
-.input input {
-  height: 100%;
-  width: 100%;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #4c4c4c;
-  font-size: 1rem;
-  padding: 0 .5rem;
-  box-sizing: border-box;
-}
-
-.submit-container {
-  display: flex;
-  gap: 20px;
-  margin: 2.2rem auto;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.submit {
-  outline: none;
-  border: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 120px;
-  color: #fff;
-  background-color: #4c00b4;
-  border-radius: 50px;
-  font-size: 1.2rem;
-  font-weight: 600;
   cursor: pointer;
-  padding: 0.75rem 2.5rem;
-  margin-bottom: 0.75rem;
+  text-decoration: none;
+  margin-left: 5px;
 }
 
-.inactive {
-  background-color: #b3a1e6;
+.switch-text span:hover {
+  text-decoration: underline;
 }
 
 /* By default, error messages are hidden */
@@ -314,10 +199,10 @@
   display: none;
   
   position: absolute;
-  bottom: -22px;
+  bottom: -18px;
   left: 50px;
 
-  color: #a01515;
+  color: #e90000;
   font-size: 0.75rem;
   margin-top: 0.25rem;
   text-align: left;
@@ -334,20 +219,6 @@ form.was-submitted input:invalid {
   border: none;
 }
 
-/*
-   ONLY when the form has class 'was-submitted', 
-   we target invalid inputs 
-*/
-
-form.was-submitted input:invalid {
-  border: 1px solid #ff4d4d;
-}
-
-/* 
-   If the input is invalid AND inside a submitted form,
-   display the sibling error message 
-*/
-
 form.was-submitted input:invalid ~ .error-message {
   display: block;
 }
@@ -355,66 +226,93 @@ form.was-submitted input:invalid ~ .error-message {
 /* Responsive Styles */
 @media (max-width: 56.25em) {
   .container {
-    max-width: 100vw;
+    max-width: 28rem;
     width: 70%;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding: 2rem 3rem;  
+  }
+
+  .input {
+    max-width: 100%;
+    height: 3rem;
+    font-size: 0.95rem;
   }
 }
 
 @media (max-width: 37.5em) {
   .container {
-    max-width: 100vw;
-    width: 60%;
-    padding: 1.5rem 1rem;
+    max-width: 28rem;
+    width: 70%;
+    padding: 3rem 2rem;
   }
+
   .header {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
   }
+  
   .text {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
+  
   .underline {
-    width: 28px;
+    width: 48px;
     height: 3px;
   }
+  
   .inputs {
     margin-top: 1.2rem;
-    gap: 16px;
+    gap: 1.5rem;
   }
+  
   .input {
     max-width: 100%;
     height: 40px;
     font-size: 0.95rem;
   }
+  
   .icon {
     margin: 0 0.5rem;
-    font-size: 1.25rem;
+    font-size: 1rem;
   }
+
   .input input {
     font-size: 0.95rem;
     padding: 0 0.25rem;
   }
-  .submit-container {
-    gap: 10px;
-    margin: 1.5rem auto;
-  }
-  .submit {
-    min-width: 90px;
-    font-size: 0.95rem;
-    padding: 8px 10px;
+
+  .main-submit-btn {
+    min-width: 5.5rem;
+    font-size: 1rem;
+    padding: 0.75rem 2.5rem;
   }
 }
 
 @media (max-width: 25em) {
   .container {
-    padding: 0 8vw;
+    padding: 1.5rem 2rem;
   }
+  
+  .header{
+    padding-bottom: 1.25rem;
+  }
+
+  .header .text{
+    font-size: 1.5rem;
+  }
+
+  .inputs{
+    gap: 1.2rem;
+  }
+
   .input {
-    height: 36px;
+    height: 2rem;
   }
-  .submit {
+
+  .error-message{
+    left: 0;
+  }
+
+  .main-submit-btn {
     font-size: 0.9rem;
-    padding: .5rem .5rem;
+    padding: .5rem 1rem;
   }
 }

@@ -27,10 +27,19 @@ function Home() {
       if (user) {
         return;
       }
+
+      if (
+        location.pathname.includes("login") ||
+        location.pathname.includes("signup")
+      ) {
+        return;
+      }
+
       try {
         await api.get("/api/auth/verify");
         console.log("auth verify");
       } catch (err) {
+        if (location.pathname.includes("login")) return;
         console.log("Auth failed, redirecting", err);
         navigate("login", { replace: true });
       }

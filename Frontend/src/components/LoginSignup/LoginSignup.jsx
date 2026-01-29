@@ -108,30 +108,11 @@ function LoginSignup() {
       <div className="container">
         {notification && showNotification()}
         <div className="header">
-          {/* <div className="text">{action.charAt(0).toUpperCase() + action.slice(1)}</div>
-          <div className="underline"></div> */}
-
           <div className="text">
             {action === "login" ? "Welcome Back" : "Create Account"}
           </div>
           <div className="underline"></div>
         </div>
-
-        {/* The Toggle Switch */}
-        {/* <div className="toggle-container">
-          <div
-            className={`toggle-btn ${action === "login" ? "active" : ""}`}
-            onClick={() => navigate("/login")}
-          >
-            Login
-          </div>
-          <div
-            className={`toggle-btn ${action === "sign up" ? "active" : ""}`}
-            onClick={() => navigate("/signup")}
-          >
-            Sign Up
-          </div>
-        </div> */}
 
         <form
           onSubmit={handleSubmit}
@@ -200,42 +181,10 @@ function LoginSignup() {
             </div>
           </div>
 
-          {/* <div className="submit-container">
-            <button
-              type="button"
-              className={action === "sign up" ? "submit" : "submit inactive"}
-              onClick={() =>
-                action === "sign up"
-                  ? document.forms[0].requestSubmit()
-                  : navigate("/signup")
-              }
-            >
-              Sign Up
-            </button>
-            <button
-              className={action === "login" ? "submit" : "submit inactive"}
-              key={1}
-              type="button"
-              onClick={(e) => {
-                if (action !== "login") {
-                  // debugger;
-                  navigate("/login");
-                } else {
-                  handleSubmit(e);
-                }
-              }}
-            >
-              Log in
-            </button>
-            <button type="submit" style={{ display: "none" }} />
-          </div> */}
-
-          {/* 2. NEW: Single Submit Button */}
           <button type="submit" className="main-submit-btn">
             {action === "login" ? "Login" : "Sign Up"}
           </button>
 
-          {/* 3. NEW: Bottom Helper Text */}
           <div className="switch-text">
             {action === "login" ? "Not signed up?" : "Already have an account?"}
             <span onClick={toggleMode}>
