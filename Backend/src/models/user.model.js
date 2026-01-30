@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
+    },
+    isGuest: {
+        type: Boolean,
+        default: false,
     }
 },{
     timestamps: true,

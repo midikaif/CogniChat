@@ -83,6 +83,22 @@ function LoginSignup() {
       });
   };
 
+  const handleGuestLogin = async () => {
+    setLoading(true);
+    try {
+      const { data } = await api.post("/api/auth/guest");
+
+      if (data.success) {
+        setUser(data.user);
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Guest login failed", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Helper to switch modes easily
   const toggleMode = () => {
     if (action === "login") {
@@ -97,7 +113,6 @@ function LoginSignup() {
     setIsSubmitted(false);
     setNotification("");
   }, [location.pathname, setNotification]);
-
 
   if (loading) {
     return null;
@@ -184,6 +199,22 @@ function LoginSignup() {
           <button type="submit" className="main-submit-btn">
             {action === "login" ? "Login" : "Sign Up"}
           </button>
+
+          <div
+            style={{
+              marginTop: "15px",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <button
+              type="button" // Important: preventing form submit
+              onClick={handleGuestLogin}
+              className="guest-btn"
+            >
+              Continue as Guest
+            </button>
+          </div>
 
           <div className="switch-text">
             {action === "login" ? "Not signed up?" : "Already have an account?"}

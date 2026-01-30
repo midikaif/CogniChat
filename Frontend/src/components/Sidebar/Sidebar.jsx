@@ -133,7 +133,6 @@ function Sidebar() {
         {extended && (
           <div className="recent">
             <p className="recent-title">Recent</p>
-            {/* 2. LOADING LOGIC */}
             {loadingList ? (
               <div className="skeleton-list">
                 <div className="skeleton-item"></div>
