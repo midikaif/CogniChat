@@ -108,6 +108,7 @@ function logoutController(req, res) {
 
 function guestLogin(req, res) {
   try {
+    console.log("Guest login requested");
     const randomId = Math.floor(1000 + Math.random() * 9000);
     const guestFirstname = `Guest_first_${randomId}`;
     const guestEmail = `guest_${Date.now()}@cognichat.temp`;
@@ -123,6 +124,8 @@ function guestLogin(req, res) {
 
     newGuest.save();
 
+    console.log("Guest user created:", newGuest);
+
     const token = jwt.sign({ id: newGuest._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
@@ -133,6 +136,8 @@ function guestLogin(req, res) {
       sameSite: "none", // Allows the cookie to cross the redirect boundary easily
       maxAge: 24 * 60 * 60 * 1000,
     });
+
+    console.log("Guest login successful", newGuest);
 
     res.status(201).json({
       success: true,

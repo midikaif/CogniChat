@@ -135,7 +135,7 @@ function Chats({ selectedChat }) {
               <RiRobot2Line size={24} color="#5e5e5e" />
             </div>
             {/* <img src={assets.gemini_icon} alt="gemini icon" /> */}
-            <div className="loader">
+            <div className="ai-loader">
               <hr />
               <hr />
               <hr />

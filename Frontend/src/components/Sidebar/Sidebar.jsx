@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "./Sidebar.css";
 import { assets } from "../../assets/assets";
 import api from "../../apis/api";
@@ -18,7 +18,8 @@ function Sidebar() {
     setSelectedChat,
     setPrevPrompts,
     isCreatingChat,
-    user
+    user,
+    setUser
   } = useContext(Context);
 
   const [loadingList, setLoadingList] = useState(true);
@@ -26,7 +27,10 @@ function Sidebar() {
   const [newChat, setNewChat] = useState(false);
   const [chatInput, setChatInput] = useState("");
 
+  const navigate = useNavigate();
+
   useEffect(() => {
+    console.log(user);
     if(!user){
       return;
     }
@@ -79,75 +83,91 @@ function Sidebar() {
 
     showNotification("");
   }
+  const handleSignout = async () => {
+      console.log('Signing out');
+    try {
+      await api.post("/api/auth/logout");
+      setUser(null);
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
+
 
   return (
     <div className="sidebar">
-      <div className="top">
-        <img
-          className="menu"
-          onClick={() => {
-            setExtended((prev) => !prev);
-            if (newChat) setNewChat(false);
-          }}
-          src={assets.menu_icon}
-          alt="menu icon"
-        />
+      <img
+        className="menu"
+        onClick={() => {
+          setExtended((prev) => !prev);
+          if (newChat) setNewChat(false);
+        }}
+        src={assets.menu_icon}
+        alt="menu icon"
+      />
 
-        <div className="new-chat">
-          <div
-            onClick={() => {
-              setNewChat((prev) => !prev);
-              setExtended(true);
-            }}
-            className="chat-icons"
-          >
-            {newChat ? (
-              <IoIosArrowBack />
-            ) : (
-              <img src={assets.plus_icon} alt="" />
-            )}
-            {extended && !newChat && <p>New Chat</p>}
-          </div>
-          {newChat && extended && (
-            <form
-              className="chat-input-container"
-              onSubmit={(e) => {
-                sendChat(e);
+      {user?.isGuest && extended ? (
+        <div className="guest-warning">
+          Chats are temporary.
+          <span onClick={handleSignout} style={{cursor:"po"}}>Log in to save.</span>
+        </div>
+      ) : (
+        <div className="top">
+          <div className="new-chat">
+            <div
+              onClick={() => {
+                setNewChat((prev) => !prev);
+                setExtended(true);
               }}
+              className="chat-icons"
             >
-              <input
-                type="text"
-                className="chat-input"
-                autoFocus
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                required
-              />
-              <button className="submit-btn" type="submit">
-                <IoMdSend size={20} />
-              </button>
-            </form>
+              {newChat ? (
+                <IoIosArrowBack />
+              ) : (
+                <img src={assets.plus_icon} alt="" />
+              )}
+              {extended && !newChat && <p>New Chat</p>}
+            </div>
+            {newChat && extended && (
+              <form
+                className="chat-input-container"
+                onSubmit={(e) => {
+                  sendChat(e);
+                }}
+              >
+                <input
+                  type="text"
+                  className="chat-input"
+                  autoFocus
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  required
+                />
+                <button className="submit-btn" type="submit">
+                  <IoMdSend size={20} />
+                </button>
+              </form>
+            )}
+          </div>
+
+          {extended && (
+            <div className="recent">
+              <p className="recent-title">Recent</p>
+              {loadingList ? (
+                <div className="skeleton-list">
+                  <div className="skeleton-item"></div>
+                  <div className="skeleton-item"></div>
+                  <div className="skeleton-item"></div>
+                </div>
+              ) : (
+                <RecentChats chats={chats} onDeleteChat={onDeleteChat} />
+              )}
+            </div>
           )}
         </div>
-
-        {extended && (
-          <div className="recent">
-            <p className="recent-title">Recent</p>
-            {loadingList ? (
-              <div className="skeleton-list">
-                <div className="skeleton-item"></div>
-                <div className="skeleton-item"></div>
-                <div className="skeleton-item"></div>
-              </div>
-            ) : (
-              <RecentChats chats={chats} onDeleteChat={onDeleteChat} />
-            )}
-          </div>
-        )}
-      </div>
-
+      )}
       {notification && user && showNotification()}
-
       <div className="bottom">
         {/* --- CHANGE 1: Help Button --- */}
         <div className="bottom-item recent-entry">

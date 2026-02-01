@@ -89,6 +89,7 @@ function LoginSignup() {
       const { data } = await api.post("/api/auth/guest");
 
       if (data.success) {
+        console.log("Guest login data:", data);
         setUser(data.user);
         navigate("/");
       }

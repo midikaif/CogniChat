@@ -41,12 +41,9 @@ function Navbar() {
 
         {/* 3. The Minimalist Dropdown */}
         {showSignout && (
-          <div className="profile-dropdown" onClick={()=>{console.log("signout")}}>
+          <div className="profile-dropdown">
             <p className="dropdown-text">Sign out?</p>
-            <button className="signout-btn" onClick={()=> {
-                console.log('eee'); 
-            handleSignout()}}>
-
+            <button className="signout-btn" onClick={handleSignout}>
               Sign out
             </button>
           </div>
