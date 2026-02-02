@@ -83,6 +83,7 @@ function Sidebar() {
 
     showNotification("");
   }
+
   const handleSignout = async () => {
       console.log('Signing out');
     try {
@@ -93,7 +94,6 @@ function Sidebar() {
       console.error("Logout failed", err);
     }
   };
-
 
   return (
     <div className="sidebar">

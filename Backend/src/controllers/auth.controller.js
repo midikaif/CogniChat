@@ -109,17 +109,19 @@ function logoutController(req, res) {
 function guestLogin(req, res) {
   try {
     console.log("Guest login requested");
-    const randomId = Math.floor(1000 + Math.random() * 9000);
-    const guestFirstname = `Guest_first_${randomId}`;
-    const guestEmail = `guest_${Date.now()}@cognichat.temp`;
+    const randomId = Math.floor(100 + Math.random() * 900);
+    const guestFirstname = `John_${randomId}`;
+    const guestEmail = `johndoe_${Date.now()}@cognichat.temp`;
 
     const newGuest = new userModel({
       fullName: {
         firstName: guestFirstname,
-        lastName: "Guest",
+        lastName: "Doe",
       },
       email: guestEmail,
       isGuest: true,
+      // Set them to self-destruct in 24 hours
+      expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
 
     newGuest.save();

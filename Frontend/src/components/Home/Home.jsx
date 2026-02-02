@@ -1,12 +1,10 @@
 import { useContext, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import "./Home.css";
 import Welcome from "../Welcome/Welcome";
 import Chats from "../Chats/Chats";
 import SearchBar from "../SearchBar/SearchBar";
 import { Context } from "../../Context/ContextProvider";
-import api from "../../apis/api";
 
 function Home() {
   const {
@@ -15,16 +13,14 @@ function Home() {
     isCreatingChat,
     loadingReply,
     user,
-    setLoading,
   } = useContext(Context);
 
-  const navigate = useNavigate();
 
   const resultRef = useRef(null);
 
   useEffect(() => {
-    const checkAuth = async () => {
       if (user) {
+        console.log("user exists");
         return;
       }
 
@@ -35,20 +31,6 @@ function Home() {
         return;
       }
 
-      try {
-        await api.get("/api/auth/verify");
-        console.log("auth verify");
-      } catch (err) {
-        if (location.pathname.includes("login")) return;
-        console.log("Auth failed, redirecting", err);
-        navigate("login", { replace: true });
-      }
-    };
-
-    checkAuth();
-  }, [navigate, user, setLoading]);
-
-  useEffect(() => {
     if (resultRef.current) {
       resultRef.current.scrollTop = resultRef.current.scrollHeight;
     }

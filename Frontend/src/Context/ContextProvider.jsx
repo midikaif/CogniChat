@@ -8,7 +8,10 @@ const Context = createContext();
 export { Context };
 
 const ContextProvider = (props) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("cognichat_user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [input, setInput] = useState("");
   const [userPrompt, setUserPrompt] = useState("");
   const [prevPrompts, setPrevPrompts] = useState([]);
@@ -23,6 +26,39 @@ const ContextProvider = (props) => {
   const [socket, setSocket] = useState(null);
   const socketRef = useRef(null);
 
+  //  SYNC: Whenever 'user' changes, update Local Storage
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("cognichat_user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("cognichat_user");
+    }
+  }, [user]);
+
+  // 3. BACKGROUND VERIFY: Check if the token is still valid on the server
+  useEffect(() => {
+    const verifyUser = async () => {
+      // Only verify if we have a user locally
+      if (!user) return;
+
+      try {
+        const { data } = await api.get("/api/auth/verify");
+        if (data.success) {
+          // Update user with fresh data from server
+          setUser(data.user);
+        }
+      } catch (error) {
+        // Token expired or invalid? Logout immediately.
+        console.log("Session expired", error);
+        setUser(null);
+        localStorage.removeItem("cognichat_user");
+      }
+    };
+
+    // Run this once when the app starts
+    verifyUser();
+  }, []);
+
   const startChatFromWelcome = async (prompt) => {
     setIsCreatingChat(true);
     setShowResult(true);
@@ -36,7 +72,6 @@ const ContextProvider = (props) => {
       },
     ]);
 
-
     try {
       const response = await api.post("api/chat", { prompt: prompt });
 
@@ -47,7 +82,6 @@ const ContextProvider = (props) => {
       }
 
       if (newChat && newChat._id) {
-
         setPrevPrompts([
           {
             role: "user",
@@ -59,7 +93,6 @@ const ContextProvider = (props) => {
         setSelectedChat(newChat._id);
         setIsCreatingChat(false);
 
-
         // setPrevPrompts((prev) => [...prev, newChat]);
 
         // setLoadingReply(false);
@@ -67,7 +100,7 @@ const ContextProvider = (props) => {
         // console.log(prevPrompts);
 
         setNotification("New Conversation Started");
-        
+
         // --- FIXED SOCKET LOGIC ---
         // let activeSocket = socket;
 
@@ -174,12 +207,12 @@ const ContextProvider = (props) => {
     isCreatingChat,
     loadingReply,
     setLoadingReply,
-    socketRef
+    socketRef,
   };
 
   return (
     <Context.Provider value={contextValue}>{props.children}</Context.Provider>
   );
-};
+};;
 
 export default ContextProvider;

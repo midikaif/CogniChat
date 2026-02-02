@@ -40,6 +40,40 @@ a {
   width: 100%;
 }
 
+.guest-warning {
+  /* Position & Spacing */
+  margin: 6rem 1rem;
+  padding: 12px 15px;
+  border-radius: 12px;
+  
+  /* The Look: Subtle Purple Tint */
+  background: rgba(118, 75, 162, 0.08); /* Extremely light purple */
+  border: 1px solid rgba(118, 75, 162, 0.2);
+  
+  /* Typography */
+  color: #585858;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.guest-warning span {
+  display: inline-block;
+  margin-left: 4px;
+  
+  /* The Link Look */
+  color: #764ba2; 
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.guest-warning span:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
 .sidebar .new-chat {
   width: 100%;
   margin-top: 40px;
