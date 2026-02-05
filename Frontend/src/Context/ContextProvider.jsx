@@ -21,7 +21,7 @@ const ContextProvider = (props) => {
   const [selectedChat, setSelectedChat] = useState(null);
   const [settings, setSettings] = useState(false);
   const [isCreatingChat, setIsCreatingChat] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [loadingReply, setLoadingReply] = useState(false);
   const [socket, setSocket] = useState(null);
   const socketRef = useRef(null);
@@ -39,7 +39,7 @@ const ContextProvider = (props) => {
   useEffect(() => {
     const verifyUser = async () => {
       // Only verify if we have a user locally
-      if (!user) return;
+      // if (!user) return;
 
       try {
         const { data } = await api.get("/api/auth/verify");
@@ -52,6 +52,9 @@ const ContextProvider = (props) => {
         console.log("Session expired", error);
         setUser(null);
         localStorage.removeItem("cognichat_user");
+      }
+      finally{
+        setLoading(false);
       }
     };
 

@@ -97,6 +97,7 @@ function Sidebar() {
         </div>
       ) : (
         <div className="top">
+        {!user.isGuest && (
           <div className="new-chat">
             <div
               onClick={() => {
@@ -107,7 +108,7 @@ function Sidebar() {
               <img src={assets.plus_icon} alt="" />
               {extended && <p>New Chat</p>}
             </div>
-          </div>
+          </div>)}
 
           {extended && (
             <div className="recent">

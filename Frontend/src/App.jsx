@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 // Imports
 import MainLayout from "./layouts/MainLayout";
@@ -11,7 +11,7 @@ import Loader from "./components/Loader/Loader";
 import { Context } from "./Context/ContextProvider";
 
 function App() {
-  const { loading } = useContext(Context);
+  const { loading, user} = useContext(Context);
 
   return (
     <>
@@ -23,6 +23,7 @@ function App() {
           <Route path="/" element={<MainLayout />}>
             {/* CHILD 1: Home Page (Default) */}
             <Route path="/" element={<Home />}>
+              <Route index element={!user ? <Navigate to="/login" /> : null} />
               <Route path="login" element={<LoginSignup />} />
               <Route path="signup" element={<LoginSignup />} />
             </Route>
