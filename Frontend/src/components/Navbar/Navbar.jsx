@@ -6,7 +6,7 @@ import { assets } from "../../assets/assets";
 import "./Navbar.css";
 
 function Navbar() {
-  const { setSelectedChat, setUser } = useContext(Context);
+  const { setSelectedChat, setUser, setExtended } = useContext(Context);
   const [showSignout, setShowSignout] = useState(false);
   const navigate = useNavigate();
 
@@ -25,6 +25,13 @@ function Navbar() {
 
   return (
     <div className="nav">
+      <img
+        src={assets.menu_icon}
+        className="nav-menu-icon"
+        onClick={() => setExtended(true)}
+        alt="Menu"
+      />
+
       {/* 1. Logo Text */}
       <p className="nav-logo" onClick={() => setSelectedChat(null)}>
         CogniChat

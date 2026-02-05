@@ -16,6 +16,19 @@
   border-bottom: 1px solid #eee;
 }
 
+.nav-menu-icon {
+  display: none;
+}
+
+@media (max-width: 37.5em) { 
+  .nav-menu-icon {
+    display: block;
+    width: 1.25rem;
+    cursor: pointer;
+    margin-right: 1rem;
+  }
+}
+
 /* --- 2. Logo Styling --- */
 .nav-logo {
   font-size: 1.5rem;

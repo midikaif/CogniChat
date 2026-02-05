@@ -35,7 +35,7 @@ const ContextProvider = (props) => {
     }
   }, [user]);
 
-  // 3. BACKGROUND VERIFY: Check if the token is still valid on the server
+  // BACKGROUND VERIFY: Check if the token is still valid on the server
   useEffect(() => {
     const verifyUser = async () => {
       // Only verify if we have a user locally

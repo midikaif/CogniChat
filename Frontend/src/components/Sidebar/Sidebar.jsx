@@ -25,7 +25,6 @@ function Sidebar() {
   const [loadingList, setLoadingList] = useState(true);
   const [chats, setChats] = useState([]);
   const [newChat, setNewChat] = useState(false);
-  const [chatInput, setChatInput] = useState("");
 
   const navigate = useNavigate();
 
@@ -46,24 +45,6 @@ function Sidebar() {
         setLoadingList(false);
       });
   }, [isCreatingChat, chats.length, user]);
-
-  const sendChat = (e) => {
-    e.preventDefault();
-    // Simulate chat creation success
-    setChatInput("");
-    setNotification("Chat created successfully!");
-    setTimeout(() => setNotification(""), 2000);
-
-    api
-      .post("/api/chat", { prompt: chatInput })
-      .then((response) => {
-        console.log("Chat created:", response.data);
-        setChats((prev) => [...prev, response.data.chat]);
-      })
-      .catch((error) => {
-        console.error("Error creating chat:", error);
-      });
-  };
 
   async function onDeleteChat(e, id) {
     e.stopPropagation();
@@ -96,7 +77,7 @@ function Sidebar() {
   };
 
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${extended ? "extended" : ""}`}>
       <img
         className="menu"
         onClick={() => {
@@ -110,45 +91,22 @@ function Sidebar() {
       {user?.isGuest && extended ? (
         <div className="guest-warning">
           Chats are temporary.
-          <span onClick={handleSignout} style={{cursor:"po"}}>Log in to save.</span>
+          <span onClick={handleSignout} style={{ cursor: "po" }}>
+            Log in to save.
+          </span>
         </div>
       ) : (
         <div className="top">
           <div className="new-chat">
             <div
               onClick={() => {
-                setNewChat((prev) => !prev);
-                setExtended(true);
+                navigate("/");
               }}
               className="chat-icons"
             >
-              {newChat ? (
-                <IoIosArrowBack />
-              ) : (
-                <img src={assets.plus_icon} alt="" />
-              )}
-              {extended && !newChat && <p>New Chat</p>}
+              <img src={assets.plus_icon} alt="" />
+              {extended && <p>New Chat</p>}
             </div>
-            {newChat && extended && (
-              <form
-                className="chat-input-container"
-                onSubmit={(e) => {
-                  sendChat(e);
-                }}
-              >
-                <input
-                  type="text"
-                  className="chat-input"
-                  autoFocus
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  required
-                />
-                <button className="submit-btn" type="submit">
-                  <IoMdSend size={20} />
-                </button>
-              </form>
-            )}
           </div>
 
           {extended && (
@@ -195,6 +153,7 @@ function Sidebar() {
           {extended ? <p>Settings</p> : null}
         </NavLink>
       </div>
+
     </div>
   );
 }
