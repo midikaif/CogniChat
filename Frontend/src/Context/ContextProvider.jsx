@@ -25,6 +25,7 @@ const ContextProvider = (props) => {
   const [loadingReply, setLoadingReply] = useState(false);
   const [socket, setSocket] = useState(null);
   const socketRef = useRef(null);
+  const chatCache = useRef({});
 
   //  SYNC: Whenever 'user' changes, update Local Storage
   useEffect(() => {
@@ -52,8 +53,7 @@ const ContextProvider = (props) => {
         console.log("Session expired", error);
         setUser(null);
         localStorage.removeItem("cognichat_user");
-      }
-      finally{
+      } finally {
         setLoading(false);
       }
     };
@@ -61,6 +61,32 @@ const ContextProvider = (props) => {
     // Run this once when the app starts
     verifyUser();
   }, []);
+
+  const loadChat = async (chatId) => {
+    if (chatCache.current[chatId]) {
+      console.log(`[Cache] Loaded chat ${chatId} from memory.`);
+      setPrevPrompts(chatCache.current[chatId]);
+      return; // Exit early! No API call needed.
+    }
+
+    console.log(`[API] Fetching chat ${chatId}...`);
+    
+    try {
+      const response = await api.get(`/api/chat/${chatId}`);
+      const freshData = response.data.chat;
+
+      chatCache.current[chatId] = freshData;
+
+      setPrevPrompts(freshData);
+      console.log("chat cache in context -> ", chatCache.current);
+    } catch (error) {
+      console.error("Error loading chat:", error);
+    }
+  };
+
+  const updateCache = (chatId, updatedHistory) => {
+    chatCache.current[chatId] = updatedHistory;
+  };
 
   const startChatFromWelcome = async (prompt) => {
     setIsCreatingChat(true);
@@ -137,6 +163,15 @@ const ContextProvider = (props) => {
     setShowResult(true);
     setLoadingReply(true);
     // 2. Optimistic Update (Show user message immediately)
+    const newHistory = [
+      ...prevPrompts,
+      {
+        role: "user",
+        chat: chatId,
+        content: prompt,
+      },
+    ];
+
     setPrevPrompts((prev) => [
       ...prev,
       {
@@ -145,6 +180,10 @@ const ContextProvider = (props) => {
         content: prompt,
       },
     ]);
+
+    if(selectedChat){
+      chatCache.current[chatId] = newHistory;
+    }
 
     // 3. Socket Safety Check
     if (socket && socket.connected) {
@@ -211,11 +250,14 @@ const ContextProvider = (props) => {
     loadingReply,
     setLoadingReply,
     socketRef,
+    loadChat,
+    updateCache,
+    chatCache
   };
 
   return (
     <Context.Provider value={contextValue}>{props.children}</Context.Provider>
   );
-};;
+};
 
 export default ContextProvider;

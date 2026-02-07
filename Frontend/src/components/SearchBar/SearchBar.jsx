@@ -46,14 +46,17 @@ function SearchBar() {
           value={input}
           placeholder="Enter a prompt here..."
         />
-        <div>
+        <div className='search-icon'>
           <img src={assets.gallery_icon} alt="gallery icon" />
           <img src={assets.mic_icon} alt="mic icon" />
-          <img
-            src={assets.send_icon}
-            onClick={(e) => handleSubmit(e)}
-            alt="send icon"
-          />
+          <button
+            type="submit"
+          >
+            <img
+              src={assets.send_icon}
+              alt="send icon"
+            />
+          </button>
         </div>
       </form>
     </>

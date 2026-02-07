@@ -10,36 +10,29 @@ function Home() {
   const {
     selectedChat,
     prevPrompts,
+    setPrevPrompts,
     isCreatingChat,
     loadingReply,
     user,
   } = useContext(Context);
 
+  // useEffect(() => {
+  //     if (
+  //       !user && (location.pathname.includes("login") ||
+  //       location.pathname.includes("signup"))
+  //     ) {
+  //       return;
+  //     }
 
-  const resultRef = useRef(null);
-
-  useEffect(() => {
-      if (user) {
-        console.log("user exists");
-        return;
-      }
-
-      if (
-        location.pathname.includes("login") ||
-        location.pathname.includes("signup")
-      ) {
-        return;
-      }
-
-    if (resultRef.current) {
-      resultRef.current.scrollTop = resultRef.current.scrollHeight;
-    }
-  }, [prevPrompts, loadingReply]);
+  //   if (resultRef.current) {
+  //     resultRef.current.scrollTop = resultRef.current.scrollHeight;
+  //   }
+  // }, [prevPrompts, setPrevPrompts, loadingReply]);
 
   return (
     <div className="main">
       <div className="main-container">
-        <div className="result" ref={resultRef}>
+        <div className="result">
           {selectedChat || isCreatingChat ? (
             <Chats selectedChat={selectedChat} />
           ) : (

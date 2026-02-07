@@ -1,18 +1,25 @@
 .search-box {
-    position: relative;
-    bottom: 0;
-    display: flex;
+  position: relative;
+  bottom: 0;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
   background-color: #f0f4f9;
   padding: 10px 20px;
   border-radius: 50px;
+  width: 100%;
+  cursor: pointer;
 }
 
 .search-box img {
   width: 24px;
   cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.search-box img:hover {
+  opacity: 0.7;
 }
 
 .search-box input {
@@ -21,11 +28,49 @@
   border: none;
   outline: none;
   padding: 8px;
-  font-size: 18px;
+  font-size: 1.2rem;
+/* color: #585858; */
 }
 
 .search-box div {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+}
+
+/* Add this to SearchBar.css */
+.search-box button {
+    border: none;
+    background: none;
+    padding: 0;
+    display: flex; /* Removes accidental line-height gaps */
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Add hover effect to the button too */
+.search-box button:hover {
+    opacity: 0.7;
+}
+
+@media (max-width: 600px) {
+  .search-box {
+    padding: 8px 15px;
+    gap: 10px;
+  }
+
+  .search-box input {
+    font-size: 1rem; /* Prevents the zoom! */
+  }
+
+  .search-box img{
+    width: 20px;
+  }
+
+  @media (max-width: 350px) {
+     img[alt="gallery icon"], 
+    img[alt="mic icon"] {
+        display: none;
+    }
+  }
 }

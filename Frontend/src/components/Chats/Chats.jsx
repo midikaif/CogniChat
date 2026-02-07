@@ -1,12 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { parse } from "marked";
 import "./Chats.css";
 import { assets } from "../../assets/assets";
 import { Context } from "../../Context/ContextProvider";
-import api from "../../apis/api";
-import Welcome from "../Welcome/Welcome";
 import { connectSocket } from "../../utils/socket";
 import { RiRobot2Line } from "react-icons/ri";
+import hljs from "highlight.js";
+
+// 2. Import the Look (The Theme)
+// You can change 'atom-one-dark' to 'github', 'dracula', or 'vs2015'
+import "highlight.js/styles/atom-one-dark.css";
 
 function Chats({ selectedChat }) {
   const {
@@ -17,9 +20,13 @@ function Chats({ selectedChat }) {
     isCreatingChat,
     setLoadingReply,
     socketRef,
+    loadChat,
+    chatCache,
   } = useContext(Context);
 
   const [fetching, setFetching] = useState(false);
+
+  const bottomRef = useRef(null);
 
   useEffect(() => {
     if (selectedChat) {
@@ -29,20 +36,23 @@ function Chats({ selectedChat }) {
         return;
       }
 
-      setPrevPrompts([]);
       setFetching(true);
+      loadChat(selectedChat);
+      setFetching(false);
+      // setPrevPrompts([]);
 
-      api
-        .get(`/api/chat/${selectedChat}`)
-        .then((response) => {
-          const result = response.data.chat;
-          setPrevPrompts(result);
-          setFetching(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching chat data:", error);
-          setFetching(false);
-        });
+      // api
+      //   .get(`/api/chat/${selectedChat}`)
+      //   .then((response) => {
+      //     const result = response.data.chat;
+      //     setPrevPrompts(result);
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error fetching chat data:", error);
+      //   })
+      //   .finally(()=>{
+      //     setFetching(false);
+      //   })
     }
   }, [selectedChat, setPrevPrompts, isCreatingChat]);
 
@@ -70,17 +80,32 @@ function Chats({ selectedChat }) {
         return;
       }
 
-
-      setPrevPrompts((prev) => [
-        ...prev,
+      console.log([
+        ...prevPrompts,
         {
           role: "model",
           content: message.content,
         },
       ]);
 
+      const newHistory = {
+        role: "model",
+        content: message.content,
+      };
+      setPrevPrompts((prev) => {
+        const updatedHistory = [...prev, newHistory];
+        
+        if(selectedChat){
+          chatCache.current[selectedChat] = updatedHistory;
+        }
+
+        return updatedHistory;
+      });
+
+      console.log("chat cache -> ", chatCache);
+
       setLoadingReply(false);
-    };;
+    };
 
     activeSocket.on("ai-response", handleAiResponse);
 
@@ -90,7 +115,69 @@ function Chats({ selectedChat }) {
       activeSocket.off("ai-response", handleAiResponse);
     };
   }, [selectedChat, setSocket, socketRef, setPrevPrompts, setLoadingReply]);
-  // ^ Important: depend on 'socket' so if it changes, we re-bind.
+
+  useEffect(() => {
+    const timer = setTimeout(()=>{
+      hljs.highlightAll();
+    }, 10);
+    return () => clearTimeout(timer);
+  }, [prevPrompts]);
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [selectedChat, prevPrompts.length, loadingReply]);
+
+
+const chatMessages = useMemo(() => {
+  return (
+    <>
+      {prevPrompts.length > 0 &&
+        prevPrompts.map((prompt, index) => (
+          <div
+            key={index}
+            ref={prevPrompts.length - 1 === index ? bottomRef : null}
+          >
+            {prompt.role === "user" && (
+              <div className="user">
+                <img src={assets.user_icon} alt="user icon" />
+                <p className="user-message-box">{prompt.content}</p>
+              </div>
+            )}
+            {prompt.role === "model" && (
+              <div className="ai">
+                <div className="ai-icon-container">
+                  <RiRobot2Line size={24} color="#5e5e5e" />
+                </div>
+                {/* <img src={assets.gemini_generated1}  alt="gemini icon" /> */}
+                <div
+                  className="ai-message-box"
+                  dangerouslySetInnerHTML={{ __html: parse(prompt.content) }}
+                ></div>
+              </div>
+            )}
+            {prevPrompts.length - 1 === index && loadingReply && (
+              <div className="ai">
+                <div className="ai-icon-container">
+                  <RiRobot2Line size={24} color="#5e5e5e" />
+                </div>
+                {/* <img src={assets.gemini_icon} alt="gemini icon" /> */}
+                <div className="ai-loader">
+                  <hr />
+                  <hr />
+                  <hr />
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+    </>
+  );
+}, [prevPrompts, loadingReply]);
 
   if (fetching) {
     return (
@@ -107,44 +194,8 @@ function Chats({ selectedChat }) {
     );
   }
 
-  return (
-    prevPrompts.length > 0 &&
-    prevPrompts.map((prompt, index) => (
-      <div key={index}>
-        {prompt.role === "user" && (
-          <div className="user">
-            <img src={assets.user_icon} alt="user icon" />
-            <p className="user-message-box">{prompt.content}</p>
-          </div>
-        )}
-        {prompt.role === "model" && (
-          <div className="ai">
-            <div className="ai-icon-container">
-              <RiRobot2Line size={24} color="#5e5e5e" />
-            </div>
-            {/* <img src={assets.gemini_generated1}  alt="gemini icon" /> */}
-            <div
-              className="ai-message-box"
-              dangerouslySetInnerHTML={{ __html: parse(prompt.content) }}
-            ></div>
-          </div>
-        )}
-        {prevPrompts.length - 1 === index && loadingReply && (
-          <div className="ai">
-            <div className="ai-icon-container">
-              <RiRobot2Line size={24} color="#5e5e5e" />
-            </div>
-            {/* <img src={assets.gemini_icon} alt="gemini icon" /> */}
-            <div className="ai-loader">
-              <hr />
-              <hr />
-              <hr />
-            </div>
-          </div>
-        )}
-      </div>
-    ))
-  );
+  return (<>{chatMessages}</>);
+
 }
 
 export default Chats;

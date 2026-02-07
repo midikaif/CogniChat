@@ -29,21 +29,24 @@ function Sidebar() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(user);
     if(!user){
       return;
     }
+
     setLoadingList(true);
+
     api
       .get("/api/chat")
       .then((response) => {
         setChats(response.data.chats);
-        setLoadingList(false);
       })
       .catch((error) => {
         console.error("Error fetching chat data:", error);
+      })
+      .finally(() => {
         setLoadingList(false);
-      });
+      })
+      
   }, [isCreatingChat, chats.length, user]);
 
   async function onDeleteChat(e, id) {
@@ -97,7 +100,7 @@ function Sidebar() {
         </div>
       ) : (
         <div className="top">
-        {!user.isGuest && (
+        {!user?.isGuest && (
           <div className="new-chat">
             <div
               onClick={() => {
