@@ -146,6 +146,7 @@ const ContextProvider = (props) => {
         socketRef.current.emit("ai-message", {
           chat: newChat._id,
           content: prompt,
+          isFirstMessage: true,
         });
       } else {
         console.error("Critical: No chat ID returned from server");

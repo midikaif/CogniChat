@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext } from "react";
 import { Outlet } from "react-router-dom";
 import "./Home.css";
 import Welcome from "../Welcome/Welcome";
@@ -9,11 +9,7 @@ import { Context } from "../../Context/ContextProvider";
 function Home() {
   const {
     selectedChat,
-    prevPrompts,
-    setPrevPrompts,
-    isCreatingChat,
-    loadingReply,
-    user,
+    isCreatingChat
   } = useContext(Context);
 
   // useEffect(() => {

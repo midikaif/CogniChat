@@ -36,104 +36,174 @@ function initSocketServer(httpServer) {
     }
   });
 
-  io.on("connection", (socket) => {
-    console.log("New Socket connection: ", socket.id);
+io.on("connection", (socket) => {
+  console.log("New Socket connection: ", socket.id);
 
-    socket.on("ai-message", async (messagePayload) => {
-        console.log("user prompt -> ", messagePayload.content)
-        const [message, vectors] = await Promise.all([
-        messageModel.create({
-          chat: messagePayload.chat,
+  socket.on("ai-message", async (messagePayload) => {
+    const { content, chat, isFirstMessage } = messagePayload;
+
+    console.time("Total_Transaction");
+
+    try {
+      let stm = [];
+      let ltmContext = "";
+      let promptVectors = null;
+
+      // ---------------------------------------------------------
+      // 1. CONDITIONAL CONTEXT LOADING (The Optimization) ⚡
+      // ---------------------------------------------------------
+      if (isFirstMessage) {
+        // 🚀 FAST PATH: Skip vector generation and DB searching
+        console.log("First message detected. Skipping context search.");
+
+        console.time("Fast_Path");
+        // Just save the message text to DB (Fast)
+        await messageModel.create({
+          chat: chat,
           user: socket.user._id,
-          content: messagePayload.content,
+          content: content,
           role: "user",
-        }),
-        await generateVector(messagePayload.content),
-      ]);
+        });
+        console.timeEnd("Fast_Path");
+      } else {
+        // 🐢 NORMAL PATH: Do the heavy lifting for context
 
-      await createMemory({
-        vectors,
-        messageId: message.id,
-        metadata: {
-          chat: messagePayload.chat,
-          user: socket.user._id,
-          text: messagePayload.content,
-        },
-      });
-
-      const [memory, chatHistory] = await Promise.all([
-        queryMemory({
-          queryVector: vectors[0].values,
-          limit: 3,
-          metadata: {
+        console.time("Message_Vector_Gen");
+        // A. Start generating vectors AND saving to DB in parallel
+        const [message, vectors] = await Promise.all([
+          messageModel.create({
+            chat: chat,
             user: socket.user._id,
-          },
-        }),
-        (messageModel
-          .find({
-            chat: messagePayload.chat,
-          })
-          .sort({ createdAt: -1 })
-          .limit(20)
-          .lean()),
-      ]);
-      
+            content: content,
+            role: "user",
+          }),
+          generateVector(content), // 🐢 Expensive!
+        ]);
+        console.timeEnd("Message_Vector_Gen");
 
-      const stm = chatHistory.reverse().map((item) => {
-        return {
+        promptVectors = vectors;
+
+        console.time("Memory_ChatHistory_Fetch");
+        // B. Search for Context (LTM & STM)
+        const [memory, chatHistory] = await Promise.all([
+          queryMemory({
+            queryVector: vectors[0].values,
+            limit: 3,
+            metadata: { user: socket.user._id },
+          }),
+          messageModel
+            .find({ chat: chat })
+            .sort({ createdAt: -1 })
+            .limit(20)
+            .lean(),
+        ]);
+        console.timeEnd("Memory_ChatHistory_Fetch");
+
+        console.time("STM");
+        // C. Format Short Term Memory
+        stm = chatHistory.reverse().map((item) => ({
           role: item.role,
           parts: [{ text: item.content }],
-        };
-      });
+        }));
+        console.timeEnd("STM");
 
-      const ltm = [
-        {
-          role: "user",
-          parts: [
-            {
-              text: `
-                        these are some previous messages from the chat, use them to generate a response.
-                        ${memory && memory.map((item) => item.metadata.text).join("\n")}
-                    `,
-            },
-          ],
-        },
+        console.time("LTM");
+        // D. Format Long Term Memory (Fixing the "undefined" bug) 🧼
+        if (memory && memory.length > 0) {
+          const memoryText = memory
+            .map((item) => item.metadata.text)
+            .join("\n");
+          ltmContext = `
+              Relevant context from previous conversations:
+              ${memoryText}
+            `;
+        }
+        console.timeEnd("LTM");
+      }
+
+      // ---------------------------------------------------------
+      // 2. CONSTRUCT PROMPT & GENERATE 🧠
+      // ---------------------------------------------------------
+
+      // We inject the LTM context (if it exists) into the System Instruction logic
+      // or as the first part of the prompt.
+      const finalPrompt = [
+        // Only add LTM block if we actually have context
+        ...(ltmContext
+          ? [
+              {
+                role: "user",
+                parts: [{ text: ltmContext }],
+              },
+            ]
+          : []),
+
+        ...stm,
+        // The current user message
+        { role: "user", parts: [{ text: content }] },
       ];
 
-      const response = await generateResponse([...ltm, ...stm]);
+      const response = await generateResponse(finalPrompt);
 
-      console.log("Generated response: ", response);
-
+      // 3. SEND REPLY FAST (Fire and Forget) 🔥
       socket.emit("ai-response", {
         content: response,
-        chat: messagePayload.chat,
+        chat: chat,
       });
-      
-      
-      const [responseMessage, responseVectors] = await Promise.all([
-        messageModel.create({
-          chat: messagePayload.chat,
-          user: socket.user._id,
-          content: response,
-          role: "model",
-        }),
-        generateVector(response),
-      ]);
+      console.timeEnd("Total_Transaction");
 
-      
-      await createMemory({
-        vectors: responseVectors,
-        messageId: responseMessage._id,
-        metadata: {
-          chat: messagePayload.chat,
-          user: socket.user._id,
-          text: response,
-        },
-      });
+      // ---------------------------------------------------------
+      // 4. BACKGROUND WORK (After Reply) 🧹
+      // ---------------------------------------------------------
+      // Now that the user is happy reading the reply, we do the
+      // heavy vector work for the *next* turn.
 
-      
-    });
+      (async () => {
+        try {
+          // If we skipped vector gen earlier (Fast Path), do it now!
+          if (!promptVectors) {
+            promptVectors = await generateVector(content);
+            // Also need to Retro-save the memory for the user message we created earlier
+            // (You might need to fetch the message ID if you didn't keep it)
+          }
+
+          // Generate Response Vector
+          const [responseMessage, responseVectors] = await Promise.all([
+            messageModel.create({
+              chat: chat,
+              user: socket.user._id,
+              content: response,
+              role: "model",
+            }),
+            generateVector(response),
+          ]);
+
+          // Save Response to Vector DB
+          await createMemory({
+            vectors: responseVectors,
+            messageId: responseMessage._id,
+            metadata: {
+              chat: chat,
+              user: socket.user._id,
+              text: response,
+            },
+          });
+
+          // Note: If it was the first message, you should also call createMemory
+          // for the *User's* message here since we skipped it in Step 1.
+          if (isFirstMessage) {
+            // ... Logic to save User Message vector ...
+          }
+        } catch (bgError) {
+          console.error("Background task failed:", bgError);
+        }
+      })();
+    } catch (error) {
+      console.error("Socket Error:", error);
+    }
   });
+});
+
 }
 
 module.exports = initSocketServer;

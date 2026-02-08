@@ -4,3 +4,5 @@ node_modules
 # Ignore production build files
 Backend\public\assets
 Backend\public\index.html
+
+DumpCode.js
