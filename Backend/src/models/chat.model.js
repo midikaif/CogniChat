@@ -13,6 +13,10 @@ const chatSchema = new mongoose.Schema({
     lastActivity: {
         type: Date,
         default: Date.now
+    },
+    expiresAt: {
+        type: Date,
+        expires: 0
     }
 },{
     timestamps: true

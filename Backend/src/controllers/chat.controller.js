@@ -1,7 +1,6 @@
 const chatModel = require("../models/chat.model");
 const messageModel = require("../models/message.model");
-const {generateResponse} = require("../services/ai.service")
-
+const { generateResponse } = require("../services/ai.service");
 
 async function createChat(req, res) {
   const { prompt } = req.body;
@@ -10,13 +9,19 @@ async function createChat(req, res) {
   try {
     if (prompt) {
       const titlePrompt = `Summarize this text into a concise chat title (max 5 words), do not use quotes: "${prompt}"`;
-      title = await generateResponse(titlePrompt);
+      title = !req.user?.isGuest ? await generateResponse(titlePrompt) : 'guest title';
     }
 
-    const newChat = await chatModel.create({
+    const newChat = chatModel({
       user: req.user._id,
       title: title.trim(),
     });
+
+    if (req?.user?.isGuest) {
+      newChat.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    }
+    
+    await newChat.save();
 
     res.status(201).json({
       message: "Chat created successfully",

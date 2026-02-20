@@ -1,4 +1,4 @@
-const { Server } = require("socket.io");
+const socketConfig = require("../config/socket");
 const cookie = require("cookie");
 const userModel = require("../models/user.model");
 const { generateResponse, generateVector } = require("../services/ai.service");
@@ -7,7 +7,7 @@ const messageModel = require("../models/message.model");
 const { createMemory, queryMemory } = require("../services/vectors.service");
 
 function initSocketServer(httpServer) {
-  const io = new Server(httpServer, {
+  const io = socketConfig.init(httpServer, {
     cors: {
       origin: [
         "http://localhost:5173",

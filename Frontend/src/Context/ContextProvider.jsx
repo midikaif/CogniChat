@@ -122,12 +122,6 @@ const ContextProvider = (props) => {
         setSelectedChat(newChat._id);
         setIsCreatingChat(false);
 
-        // setPrevPrompts((prev) => [...prev, newChat]);
-
-        // setLoadingReply(false);
-
-        // console.log(prevPrompts);
-
         setNotification("New Conversation Started");
 
         // --- FIXED SOCKET LOGIC ---
