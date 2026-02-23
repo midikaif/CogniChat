@@ -70,7 +70,7 @@ const ContextProvider = (props) => {
     }
 
     console.log(`[API] Fetching chat ${chatId}...`);
-    
+
     try {
       const response = await api.get(`/api/chat/${chatId}`);
       const freshData = response.data.chat;
@@ -124,24 +124,33 @@ const ContextProvider = (props) => {
 
         setNotification("New Conversation Started");
 
-        // --- FIXED SOCKET LOGIC ---
-        // let activeSocket = socket;
-
-        // Check if we need to connect manually
-        if (!socketRef.current || !socketRef.current.connected) {
-          const newSocket = connectSocket(); // Connect immediately
-          // 1. Save to Ref (INSTANT)
-          socketRef.current = newSocket;
-
-          // 2. Save to State (For re-renders, happens later)
-          setSocket(newSocket);
-        }
-
-        socketRef.current.emit("ai-message", {
+        const payload = {
           chat: newChat._id,
           content: prompt,
           isFirstMessage: true,
-        });
+        };
+
+        console.log("sending payload -> ", payload);
+
+        // 1. IS THE PHONE ALREADY CONNECTED?
+        if (socketRef.current && socketRef.current.connected) {
+          // Great! Speak immediately.
+          socketRef.current.emit("ai-message", payload);
+        } else {
+          // 2. PHONE IS DEAD. TURN IT ON.
+          const newSocket = connectSocket();
+          socketRef.current = newSocket;
+          setSocket(newSocket);
+
+          // 3. WAIT FOR THE TOWER SIGNAL BEFORE SPEAKING!
+          // We use .once instead of .on so it only triggers this specific time
+          newSocket.once("connect", () => {
+            console.log(
+              "Socket finally connected! Now sending delayed payload...",
+            );
+            newSocket.emit("ai-message", payload);
+          });
+        }
       } else {
         console.error("Critical: No chat ID returned from server");
       }
@@ -176,7 +185,7 @@ const ContextProvider = (props) => {
       },
     ]);
 
-    if(selectedChat){
+    if (selectedChat) {
       chatCache.current[chatId] = newHistory;
     }
 
@@ -199,8 +208,7 @@ const ContextProvider = (props) => {
     }
   };
 
-  const showNotification = (e) => {
-    console.log(e);
+  const showNotification = () => {
     return (
       <div className="notification" style={{}}>
         <MdCheckCircle size={24} style={{ marginRight: 6 }} />
@@ -247,7 +255,7 @@ const ContextProvider = (props) => {
     socketRef,
     loadChat,
     updateCache,
-    chatCache
+    chatCache,
   };
 
   return (

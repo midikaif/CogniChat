@@ -39,20 +39,6 @@ function Chats({ selectedChat }) {
       setFetching(true);
       loadChat(selectedChat);
       setFetching(false);
-      // setPrevPrompts([]);
-
-      // api
-      //   .get(`/api/chat/${selectedChat}`)
-      //   .then((response) => {
-      //     const result = response.data.chat;
-      //     setPrevPrompts(result);
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error fetching chat data:", error);
-      //   })
-      //   .finally(()=>{
-      //     setFetching(false);
-      //   })
     }
   }, [selectedChat, setPrevPrompts, isCreatingChat]);
 
@@ -66,8 +52,6 @@ function Chats({ selectedChat }) {
 
       socketRef.current = activeSocket;
       setSocket(activeSocket); // Update Context so others use this too
-    } else {
-      console.log("[Chats] Reusing existing socket from Context.");
     }
 
     // 2. Attach the Listener to the ACTIVE socket
@@ -75,23 +59,17 @@ function Chats({ selectedChat }) {
       // SECURITY CHECK:
       // Even if the pipe is shared, we ensure this message belongs to THIS chat.
       // (Optional but good practice)
+      console.log("Received from backend: ", message);
+      
       if (selectedChat && message.chat && message.chat !== selectedChat) {
-        console.log("Ignored message for different chat:", message.chat);
         return;
       }
-
-      console.log([
-        ...prevPrompts,
-        {
-          role: "model",
-          content: message.content,
-        },
-      ]);
 
       const newHistory = {
         role: "model",
         content: message.content,
       };
+
       setPrevPrompts((prev) => {
         const updatedHistory = [...prev, newHistory];
         
@@ -101,8 +79,6 @@ function Chats({ selectedChat }) {
 
         return updatedHistory;
       });
-
-      console.log("chat cache -> ", chatCache);
 
       setLoadingReply(false);
     };

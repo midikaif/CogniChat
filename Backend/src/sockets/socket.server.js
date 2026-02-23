@@ -40,6 +40,19 @@ io.on("connection", (socket) => {
   console.log("New Socket connection: ", socket.id);
 
   socket.on("ai-message", async (messagePayload) => {
+
+    if(socket.lastMessageTime){
+      const timeSinceLastMessage = Date.now() - socket.lastMessageTime;
+
+      if(timeSinceLastMessage < 2000){
+        console.log("Please wait for 2 seconds before sending another message.");
+        socket.emit("error", { message: "Please wait for 2 seconds before sending another message."});
+        return;
+      }
+    }
+  
+    socket.lastMessageTime = Date.now();
+  
     const { content, chat, isFirstMessage } = messagePayload;
 
     console.time("Total_Transaction");
@@ -48,6 +61,8 @@ io.on("connection", (socket) => {
       let stm = [];
       let ltmContext = "";
       let promptVectors = null;
+
+      console.log("Backend");
 
       // ---------------------------------------------------------
       // 1. CONDITIONAL CONTEXT LOADING (The Optimization) ⚡

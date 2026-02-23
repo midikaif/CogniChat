@@ -5,7 +5,7 @@ import './SearchBar.css';
 
 
 function SearchBar() {
-  const { onSend, selectedChat, startChatFromWelcome, prevPrompts } = useContext(Context);
+  const { onSend, selectedChat, startChatFromWelcome, loadingReply, setNotification } = useContext(Context);
   const [input, setInput] = useState("");
 
   const handleSubmit = (e) => {
@@ -19,43 +19,42 @@ function SearchBar() {
     } else {
       // SCENARIO 2: No chat selected (Welcome Page) -> Create new chat
       startChatFromWelcome(input);
-      console.log("Prevprompts in Search Bar:", prevPrompts);
     }
 
     // Clear input
     setInput("");
   };
 
+  const handleImageClick = () => {
+    setNotification("Image and microphone features are not available yet.");
+  }
     
-
-
   return (
     <>
       <form
         className="search-box"
-        onSubmit={(e) => {
-          // e.preventDefault();
-          handleSubmit(e);
-          // onSend(input, selectedChat);
-          // setInput("");
-        }}
+        onSubmit={handleSubmit}
       >
         <input
           type="text"
           onChange={(e) => setInput(e.target.value)}
           value={input}
-          placeholder="Enter a prompt here..."
+          placeholder={
+            loadingReply
+              ? "CogniChat is thinking..."
+              : "Type your message here..."
+          }
+          disabled={loadingReply}
         />
-        <div className='search-icon'>
+        <div className="search-icon">
+          <button type='button' onClick={handleImageClick} >
           <img src={assets.gallery_icon} alt="gallery icon" />
+          </button>
+          <button type='button' onClick={handleImageClick} >
           <img src={assets.mic_icon} alt="mic icon" />
-          <button
-            type="submit"
-          >
-            <img
-              src={assets.send_icon}
-              alt="send icon"
-            />
+          </button>
+          <button type="submit" disabled={loadingReply || !input.trim()}>
+            <img src={assets.send_icon} alt="send icon" />
           </button>
         </div>
       </form>
