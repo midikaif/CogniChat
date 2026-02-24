@@ -24,6 +24,7 @@ const ContextProvider = (props) => {
   const [loading, setLoading] = useState(true);
   const [loadingReply, setLoadingReply] = useState(false);
   const [socket, setSocket] = useState(null);
+  const [requestsLeft, setRequestsLeft] = useState(20);
   const socketRef = useRef(null);
   const chatCache = useRef({});
 
@@ -256,6 +257,8 @@ const ContextProvider = (props) => {
     loadChat,
     updateCache,
     chatCache,
+    requestsLeft,
+    setRequestsLeft,
   };
 
   return (

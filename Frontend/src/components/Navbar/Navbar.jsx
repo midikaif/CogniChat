@@ -6,13 +6,14 @@ import { assets } from "../../assets/assets";
 import "./Navbar.css";
 
 function Navbar() {
-  const { setSelectedChat, setUser, setExtended } = useContext(Context);
+  const { setSelectedChat, setUser, setExtended, requestsLeft } =
+    useContext(Context);
   const [showSignout, setShowSignout] = useState(false);
   const navigate = useNavigate();
 
   const handleSignout = async () => {
-      console.log('Signing out');
-      setShowSignout(false);
+    console.log("Signing out");
+    setShowSignout(false);
 
     try {
       await api.post("/api/auth/logout");
@@ -39,6 +40,11 @@ function Navbar() {
 
       {/* 2. User Section */}
       <div className="nav-user-container">
+
+        <div className="quota">
+          <div className="quota-text">{requestsLeft} requests left</div>
+        </div>
+
         <img
           className="user-icon"
           src={assets.user_icon}

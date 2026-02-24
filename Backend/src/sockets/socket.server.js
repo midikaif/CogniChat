@@ -56,6 +56,39 @@ io.on("connection", (socket) => {
   
     socket.lastMessageTime = Date.now();
   
+    const isSameDay = (date1, date2) => {
+      const d1 = new Date(date1);
+      const d2 = new Date(date2);
+
+      return (
+        d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate()
+      )
+    }
+
+    if(socket.user){
+      const user = await userModel.findById(socket.user._id);
+
+      if(isSameDay(user.lastRequestDate, Date.now())){
+        if(user.dailyRequests >= 20){
+          console.log("Daily request limit reached for user: ", socket.user._id);
+          socket.emit("error", { message: "Daily request limit reached. Please try again tomorrow."});
+          return;
+        } else {
+          user.dailyRequests += 1;
+        }
+      }else{
+        user.dailyRequests = 1;
+      }
+      user.lastRequestDate = Date.now();
+      await user.save();
+      socket.emit("quota-update", {
+        requestsUsed: user.dailyRequests,
+        maxRequests: 20,
+      })
+    }
+    
     const { content, chat, isFirstMessage } = messagePayload;
 
     console.time("Total_Transaction");

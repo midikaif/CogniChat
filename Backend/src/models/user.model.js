@@ -32,6 +32,14 @@ const userSchema = new mongoose.Schema(
       default: null,
       index: { expires: 0 }, // This tells Mongo: "Delete document when this time is reached"
     },
+    dailyRequests: {
+      type: Number,
+      default: 0,
+    },
+    lastRequestDate: {
+      type: Date,
+      default: Date.now,
+    }
   },
   {
     timestamps: true,
