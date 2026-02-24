@@ -40,7 +40,10 @@ io.on("connection", (socket) => {
   console.log("New Socket connection: ", socket.id);
 
   socket.on("ai-message", async (messagePayload) => {
+    
+    console.log("message -> ", messagePayload);
 
+    //Rate limiting: Allow max 1 message every 2 seconds per socket
     if(socket.lastMessageTime){
       const timeSinceLastMessage = Date.now() - socket.lastMessageTime;
 
