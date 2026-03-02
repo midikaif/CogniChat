@@ -201,6 +201,8 @@ io.on("connection", (socket) => {
         content: response,
         chat: chat,
       });
+      console.log("Reply sent ", response);
+      
       console.timeEnd("Total_Transaction");
 
       // ---------------------------------------------------------

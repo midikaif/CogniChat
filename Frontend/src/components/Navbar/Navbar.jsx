@@ -24,6 +24,12 @@ function Navbar() {
     }
   };
 
+  const getQuotaClass = () => {
+    if (requestsLeft === 0) return "danger";
+    if (requestsLeft <= 5) return "warning";
+    return ""; // If > 5, it just uses the default green base class
+  };
+
   return (
     <div className="nav">
       <img
@@ -40,9 +46,8 @@ function Navbar() {
 
       {/* 2. User Section */}
       <div className="nav-user-container">
-
-        <div className="quota">
-          <div className="quota-text">{requestsLeft} requests left</div>
+        <div className={`quota-badge ${getQuotaClass()}`}>
+          ⚡ {requestsLeft} / 20
         </div>
 
         <img

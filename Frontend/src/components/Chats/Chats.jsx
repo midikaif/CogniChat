@@ -3,7 +3,6 @@ import { parse } from "marked";
 import "./Chats.css";
 import { assets } from "../../assets/assets";
 import { Context } from "../../Context/ContextProvider";
-import { connectSocket } from "../../utils/socket";
 import { RiRobot2Line } from "react-icons/ri";
 import hljs from "highlight.js";
 
@@ -16,14 +15,9 @@ function Chats({ selectedChat }) {
     loadingReply,
     prevPrompts,
     setPrevPrompts,
-    setSocket,
     isCreatingChat,
-    setLoadingReply,
-    socketRef,
     loadChat,
-    chatCache,
-    setNotification,
-    setRequestsLeft
+   
   } = useContext(Context);
 
   const [fetching, setFetching] = useState(false);
@@ -43,74 +37,6 @@ function Chats({ selectedChat }) {
       setFetching(false);
     }
   }, [selectedChat, setPrevPrompts, isCreatingChat]);
-
-  useEffect(() => {
-    // 1. Determine which socket to use
-    let activeSocket = socketRef.current;
-
-    // If context doesn't have a connected socket, create one (Fallback)
-    if (!activeSocket || !activeSocket.connected) {
-      activeSocket = connectSocket();
-
-      socketRef.current = activeSocket;
-      setSocket(activeSocket); // Update Context so others use this too
-    }
-
-    // 2. Attach the Listener to the ACTIVE socket
-    const handleAiResponse = (message) => {
-      // SECURITY CHECK:
-      // Even if the pipe is shared, we ensure this message belongs to THIS chat.
-      // (Optional but good practice)
-      console.log("Received from backend: ", message);
-
-      if (selectedChat && message.chat && message.chat !== selectedChat) {
-        return;
-      }
-
-      const newHistory = {
-        role: "model",
-        content: message.content,
-      };
-
-      setPrevPrompts((prev) => {
-        const updatedHistory = [...prev, newHistory];
-        
-        if(selectedChat){
-          chatCache.current[selectedChat] = updatedHistory;
-        }
-
-        return updatedHistory;
-      });
-
-      setLoadingReply(false);
-    };
-
-    const handleError = err => {
-      console.error("Error from backend: ", err);
-      setLoadingReply(false);
-      setNotification(err.message || "An error occurred while processing your request.");
-    }
-
-    const handleQuotaUpdate = data => {
-      const left = data.maxRequests - data.requestsUsed;
-      setNotification(`Daily quota update: ${data.requestsUsed}/${data.maxRequests} used. ${left} requests left today.`);
-      setRequestsLeft(left);
-    }
-
-    activeSocket.on("ai-response", handleAiResponse);
-
-    activeSocket.on("error", handleError);
-    
-    activeSocket.on("quota-update", handleQuotaUpdate);
-
-    // 3. Cleanup: Remove listener ONLY. Do NOT disconnect.
-    return () => {
-      console.log("[Chats] Cleaning up listener (Socket stays alive)");
-      activeSocket.off("ai-response", handleAiResponse);
-      activeSocket.off("error", handleError);
-      activeSocket.off("quota-update", handleQuotaUpdate);
-    };
-  }, [selectedChat, setSocket, socketRef, setPrevPrompts, setLoadingReply]);
 
   useEffect(() => {
     const timer = setTimeout(()=>{

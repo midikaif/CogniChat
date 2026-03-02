@@ -45,9 +45,24 @@ const ContextProvider = (props) => {
 
       try {
         const { data } = await api.get("/api/auth/verify");
-        if (data.success) {
+        if (data.user) {
           // Update user with fresh data from server
           setUser(data.user);
+
+          const isSameDay = (date1, date2) => {
+            const d1 = new Date(date1);
+            const d2 = new Date(date2);
+
+            return (
+              d1.getFullYear() === d2.getFullYear() &&
+              d1.getMonth() === d2.getMonth() &&
+              d1.getDate() === d2.getDate()
+            );
+          };
+          if(isSameDay(data.user.lastRequestDate, Date.now())){
+            const left = 20 - data.user.dailyRequests;
+            setRequestsLeft(left); 
+          }
         }
       } catch (error) {
         // Token expired or invalid? Logout immediately.
@@ -62,6 +77,59 @@ const ContextProvider = (props) => {
     // Run this once when the app starts
     verifyUser();
   }, []);
+
+  useEffect(() => {
+    if(!socket) return;
+
+     const handleAiResponse = (message) => {
+       // SECURITY CHECK:
+       // Even if the pipe is shared, we ensure this message belongs to THIS chat.
+       // (Optional but good practice)
+       console.log("Received from backend: ", message);
+
+       if (selectedChat && message.chat && message.chat !== selectedChat) {
+         return;
+       }
+
+       const newHistory = {
+         role: "model",
+         content: message.content,
+       };
+
+       setPrevPrompts((prev) => {
+         const updatedHistory = [...prev, newHistory];
+
+         if (selectedChat) {
+           chatCache.current[selectedChat] = updatedHistory;
+         }
+
+         return updatedHistory;
+       });
+
+       setLoadingReply(false);
+     };
+
+    const handleError = err => {
+      console.error("Global socket error: ", err);
+      setLoadingReply(false);
+      setNotification(err.message || "An error occurred. Please try again.");
+    }
+
+    const handleQuotaUpdate = data => {
+      const left = data.maxRequests - data.requestsUsed;
+      setRequestsLeft(left);
+    }
+
+    socket.on("ai-response", handleAiResponse);
+    socket.on("error", handleError);
+    socket.on("quota-update", handleQuotaUpdate);
+
+    return () => {
+      socket.off("ai-response", handleAiResponse);
+      socket.off("error", handleError);
+      socket.off("quota-update", handleQuotaUpdate);
+    }
+  }, [socket, prevPrompts, selectedChat]);
 
   const loadChat = async (chatId) => {
     if (chatCache.current[chatId]) {
@@ -89,6 +157,23 @@ const ContextProvider = (props) => {
     chatCache.current[chatId] = updatedHistory;
   };
 
+  const emitToBackend = payload => {
+    console.log(socketRef.current);
+    if (socketRef.current && socketRef.current.connected) {
+      socketRef.current.emit("ai-message", payload);
+    } else {
+      console.error("Socket dead, reconnecting...");
+      const newSocket = connectSocket();
+      socketRef.current = newSocket;
+      setSocket(newSocket);
+
+      newSocket.once("connect", () => {
+        console.log("Socket connected, payload sending")
+        newSocket.emit("ai-message", payload);
+      })
+    }
+  }
+  
   const startChatFromWelcome = async (prompt) => {
     setIsCreatingChat(true);
     setShowResult(true);
@@ -133,25 +218,8 @@ const ContextProvider = (props) => {
 
         console.log("sending payload -> ", payload);
 
-        // 1. IS THE PHONE ALREADY CONNECTED?
-        if (socketRef.current && socketRef.current.connected) {
-          // Great! Speak immediately.
-          socketRef.current.emit("ai-message", payload);
-        } else {
-          // 2. PHONE IS DEAD. TURN IT ON.
-          const newSocket = connectSocket();
-          socketRef.current = newSocket;
-          setSocket(newSocket);
+        emitToBackend(payload);
 
-          // 3. WAIT FOR THE TOWER SIGNAL BEFORE SPEAKING!
-          // We use .once instead of .on so it only triggers this specific time
-          newSocket.once("connect", () => {
-            console.log(
-              "Socket finally connected! Now sending delayed payload...",
-            );
-            newSocket.emit("ai-message", payload);
-          });
-        }
       } else {
         console.error("Critical: No chat ID returned from server");
       }
@@ -190,23 +258,12 @@ const ContextProvider = (props) => {
       chatCache.current[chatId] = newHistory;
     }
 
-    // 3. Socket Safety Check
-    if (socket && socket.connected) {
-      socket.emit("ai-message", {
-        chat: chatId,
-        content: prompt,
-      });
-    } else {
-      console.error("Socket not connected. Reconnecting...");
-      setNotification("Connection lost. Retrying...");
+    const payload = {
+      chat: chatId,
+      content: prompt,
+    };
 
-      // Emergency Reconnect Logic
-      const newSocket = connectSocket();
-      newSocket.on("connect", () => {
-        newSocket.emit("ai-message", { chat: chatId, content: prompt });
-      });
-      setSocket(newSocket);
-    }
+    emitToBackend(payload);
   };
 
   const showNotification = () => {
