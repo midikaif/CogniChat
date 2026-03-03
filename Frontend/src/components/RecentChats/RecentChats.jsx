@@ -3,6 +3,7 @@ import { Context } from "../../Context/ContextProvider";
 import { assets } from "../../assets/assets";
 import "./RecentChats.css";
 import { MdDelete } from "react-icons/md";
+import {useNavigate} from "react-router-dom";
 
 function RecentChats({ chats, onDeleteChat }) {
   const {
@@ -11,6 +12,7 @@ function RecentChats({ chats, onDeleteChat }) {
     setExtended,
   } = useContext(Context);
 
+  const navigate = useNavigate();
 
   return (
     <>
@@ -23,9 +25,11 @@ function RecentChats({ chats, onDeleteChat }) {
           onClick={() => {
             setExtended(true);
             if (selectedChat === chat._id) {
+              navigate("/");
               setSelectedChat(null);
               return;
             }
+            navigate(`/c/${chat._id}`);
             setSelectedChat(chat._id);
           }}
         >

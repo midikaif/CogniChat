@@ -40,7 +40,7 @@ function Navbar() {
       />
 
       {/* 1. Logo Text */}
-      <p className="nav-logo" onClick={() => setSelectedChat(null)}>
+      <p className="nav-logo" onClick={() => {setSelectedChat(null); navigate("/")}}>
         CogniChat
       </p>
 

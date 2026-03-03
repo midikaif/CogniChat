@@ -42,6 +42,7 @@ io.on("connection", (socket) => {
   socket.on("ai-message", async (messagePayload) => {
     
     console.log("message -> ", messagePayload);
+    
 
     //Rate limiting: Allow max 1 message every 2 seconds per socket
     if(socket.lastMessageTime){
@@ -253,6 +254,7 @@ io.on("connection", (socket) => {
       })();
     } catch (error) {
       console.error("Socket Error:", error);
+      socket.emit("error", {message: error.APIError.error.message.slice(0, 100) || "An error occurred while processing your message."});
     }
   });
 });

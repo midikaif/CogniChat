@@ -135,12 +135,13 @@ const ContextProvider = (props) => {
     if (chatCache.current[chatId]) {
       console.log(`[Cache] Loaded chat ${chatId} from memory.`);
       setPrevPrompts(chatCache.current[chatId]);
-      return; // Exit early! No API call needed.
+      return true; // Exit early! No API call needed.
     }
 
     console.log(`[API] Fetching chat ${chatId}...`);
 
     try {
+      setLoading(true);
       const response = await api.get(`/api/chat/${chatId}`);
       const freshData = response.data.chat;
 
@@ -148,8 +149,12 @@ const ContextProvider = (props) => {
 
       setPrevPrompts(freshData);
       console.log("chat cache in context -> ", chatCache.current);
+      return true;
     } catch (error) {
       console.error("Error loading chat:", error);
+      return false;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -220,6 +225,7 @@ const ContextProvider = (props) => {
 
         emitToBackend(payload);
 
+        return newChat._id;
       } else {
         console.error("Critical: No chat ID returned from server");
       }

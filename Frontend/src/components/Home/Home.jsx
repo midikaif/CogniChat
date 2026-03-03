@@ -1,35 +1,47 @@
 import { useContext } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import "./Home.css";
 import Welcome from "../Welcome/Welcome";
 import Chats from "../Chats/Chats";
 import SearchBar from "../SearchBar/SearchBar";
 import { Context } from "../../Context/ContextProvider";
+import {useEffect} from "react";
 
 function Home() {
   const {
     selectedChat,
-    isCreatingChat
+    isCreatingChat,
+    loadChat,
+    setNotification,
   } = useContext(Context);
 
-  // useEffect(() => {
-  //     if (
-  //       !user && (location.pathname.includes("login") ||
-  //       location.pathname.includes("signup"))
-  //     ) {
-  //       return;
-  //     }
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {chatId} = useParams();
 
-  //   if (resultRef.current) {
-  //     resultRef.current.scrollTop = resultRef.current.scrollHeight;
-  //   }
-  // }, [prevPrompts, setPrevPrompts, loadingReply]);
+  useEffect(() => {
+    const validUrlCheck = async () => {
+      if (chatId) {
+        if (location.state?.justCreated) {
+          navigate(location.pathname, { replace: true, state: {} });
+          return;
+        }
+        const isValid = await loadChat(chatId);
+
+        if (!isValid) {
+          setNotification("The chat you are trying to access does not exist.");
+          navigate("/", { replace: true });
+        }
+      }
+    };
+    validUrlCheck();
+  }, [chatId]);
 
   return (
     <div className="main">
       <div className="main-container">
         <div className="result">
-          {selectedChat || isCreatingChat ? (
+          {chatId || isCreatingChat ? (
             <Chats selectedChat={selectedChat} />
           ) : (
             <Welcome />

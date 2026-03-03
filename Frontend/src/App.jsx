@@ -9,6 +9,7 @@ import Settings from "./components/Settings/Settings";
 import LoginSignup from "./components/LoginSignup/LoginSignup";
 import Loader from "./components/Loader/Loader";
 import { Context } from "./Context/ContextProvider";
+import Chats from "./components/Chats/Chats";
 
 function App() {
   const { loading, user} = useContext(Context);
@@ -30,6 +31,9 @@ function App() {
 
             {/* CHILD 2: Settings Page */}
             <Route path="settings" element={<Settings />} />
+
+            {/* CHILD 3: Specific Chat Route */}
+            <Route path="c/:chatId" element={<Home />} />
           </Route>
         </Routes>
       </Router>
