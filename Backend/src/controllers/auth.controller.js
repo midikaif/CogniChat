@@ -51,7 +51,6 @@ async function registerController(req, res) {
 
 async function loginController(req, res) {
   const { email, password } = req.body;
-  console.log("logincontroller");
   const user = await userModel.findOne({ email });
 
   if (!user) {
@@ -106,9 +105,30 @@ function logoutController(req, res) {
   res.status(200).json({ message: "Logged out" });
 }
 
-function guestLogin(req, res) {
+async function guestLogin(req, res) {
   try {
     console.log("Guest login requested");
+    const {guestId} = req.body;
+    
+    if(guestId){
+      const guestData = await userModel.findById(guestId);
+
+      if(guestData){
+        console.log("Existing guest found, logging in:", guestData);
+        const token = jwt.sign({id: guestData._id}, process.env.JWT_SECRET, {expiresIn: "1d"});
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 24 * 60 * 60 * 1000
+        })
+        
+        return res.status(200).json({
+          success: true,
+          user: guestData,
+        })
+      }
+    }
     const randomId = Math.floor(100 + Math.random() * 900);
     const guestFirstname = `John_${randomId}`;
     const guestEmail = `johndoe_${Date.now()}@cognichat.temp`;
@@ -124,7 +144,7 @@ function guestLogin(req, res) {
       expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
 
-    newGuest.save();
+    await newGuest.save();
 
     console.log("Guest user created:", newGuest);
 

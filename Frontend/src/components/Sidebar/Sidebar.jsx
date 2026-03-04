@@ -3,7 +3,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import "./Sidebar.css";
 import { assets } from "../../assets/assets";
 import api from "../../apis/api";
-import { IoIosArrowBack, IoMdSend } from "react-icons/io";
+import { TiSocialLinkedinCircular } from "react-icons/ti";
+import { FaGithub } from "react-icons/fa";
 import { Context } from "../../Context/ContextProvider";
 import RecentChats from "../RecentChats/RecentChats";
 
@@ -19,54 +20,15 @@ function Sidebar() {
     setPrevPrompts,
     isCreatingChat,
     user,
-    setUser
+    setUser,
+    loadingList,
+    chats,
+    setChats
   } = useContext(Context);
 
-  const [loadingList, setLoadingList] = useState(true);
-  const [chats, setChats] = useState([]);
   const [newChat, setNewChat] = useState(false);
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if(!user){
-      return;
-    }
-
-    setLoadingList(true);
-
-    api
-      .get("/api/chat")
-      .then((response) => {
-        setChats(response.data.chats);
-      })
-      .catch((error) => {
-        console.error("Error fetching chat data:", error);
-      })
-      .finally(() => {
-        setLoadingList(false);
-      })
-      
-  }, [isCreatingChat, chats.length, user]);
-
-  async function onDeleteChat(e, id) {
-    e.stopPropagation();
-    setChats((prevChats) => prevChats.filter((chat) => chat._id !== id));
-
-    if (selectedChat === id) {
-      setSelectedChat(null);
-      setPrevPrompts([]);
-    }
-
-    setNotification("Chat deleted successfully!");
-    try {
-      await api.delete(`/api/chat/${id}`, { withCredentials: true });
-    } catch (err) {
-      console.log("Delete failed: ", err);
-    }
-
-    showNotification("");
-  }
 
   const handleSignout = async () => {
       console.log('Signing out');
@@ -91,73 +53,74 @@ function Sidebar() {
         alt="menu icon"
       />
 
-      {user?.isGuest && extended ? (
-        <div className="guest-warning">
-          Chats are temporary.
-          <span onClick={handleSignout} style={{ cursor: "po" }}>
-            Log in to save.
-          </span>
-        </div>
-      ) : (
-        <div className="top">
-        {!user?.isGuest && (
-          <div className="new-chat">
-            <div
-              onClick={() => {
-                navigate("/");
-              }}
-              className="chat-icons"
-            >
-              <img src={assets.plus_icon} alt="" />
-              {extended && <p>New Chat</p>}
-            </div>
-          </div>)}
+      <div className="top">
+        {extended && (
+          <div className="recent">
+            <p className="recent-title">Recent</p>
+            {loadingList ? (
+              <div className="skeleton-list">
+                <div className="skeleton-item"></div>
+                <div className="skeleton-item"></div>
+                <div className="skeleton-item"></div>
+              </div>
+            ) : (
+              <RecentChats chats={chats} />
+            )}
+          </div>
+        )}
 
-          {extended && (
-            <div className="recent">
-              <p className="recent-title">Recent</p>
-              {loadingList ? (
-                <div className="skeleton-list">
-                  <div className="skeleton-item"></div>
-                  <div className="skeleton-item"></div>
-                  <div className="skeleton-item"></div>
-                </div>
-              ) : (
-                <RecentChats chats={chats} onDeleteChat={onDeleteChat} />
-              )}
+        {user?.isGuest && extended ? (
+          <>
+            <div className="guest-warning">
+              Chats are temporary.
+              <span onClick={handleSignout} style={{ cursor: "pointer" }}>
+                Log in to save.
+              </span>
             </div>
-          )}
-        </div>
-      )}
+          </>
+        ) : (
+          !user?.isGuest && (
+            <div className="new-chat">
+              <div
+                onClick={() => {
+                  navigate("/");
+                }}
+                className="chat-icons"
+              >
+                <img src={assets.plus_icon} alt="" />
+                {extended && <p>New Chat</p>}
+              </div>
+            </div>
+          )
+        )}
+      </div>
       {notification && user && showNotification()}
       <div className="bottom">
-        {/* --- CHANGE 1: Help Button --- */}
-        <div className="bottom-item recent-entry">
-          <img src={assets.question_icon} alt="" />
-          {extended ? <p>Help</p> : null}
-        </div>
-
-        {/* --- CHANGE 2: Activity Button --- */}
-        <div className="bottom-item recent-entry">
-          <img src={assets.history_icon} alt="" />
-          {extended ? <p>Activity</p> : null}
-        </div>
-
-        {/* --- CHANGE 3: Settings Button --- */}
-        {/* We wrap the div in NavLink so it behaves like a real link */}
-        <NavLink
-          to="/settings"
-          className={({ isActive }) =>
-            isActive
-              ? "bottom-item recent-entry active-link"
-              : "bottom-item recent-entry"
-          }
+        {/* --- CHANGE 1: Source Code (GitHub) --- */}
+        <a
+          href="https://github.com/midikaif/CogniChat"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bottom-item recent-entry"
+          style={{ textDecoration: "none", color: "inherit" }}
         >
-          <img src={assets.setting_icon} alt="" />
-          {extended ? <p>Settings</p> : null}
-        </NavLink>
-      </div>
+          {/* Assuming you add a github_icon to your assets! */}
+          <FaGithub />
+          {extended ? <p>View Source Code</p> : null}
+        </a>
 
+        {/* --- CHANGE 2: Hire the Dev (LinkedIn) --- */}
+        <a
+          href="https://www.linkedin.com/in/md-kaif-khan/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bottom-item recent-entry"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <TiSocialLinkedinCircular />
+          {extended ? <p>Hire the Dev</p> : null}
+        </a>
+      </div>
     </div>
   );
 }

@@ -6,10 +6,26 @@ async function createChat(req, res) {
   const { prompt } = req.body;
   let title = "New Chat";
 
+
+
   try {
+    if(req.user.isGuest){
+      const currentChatsCount = await chatModel.countDocuments({user: req.user._id});
+
+      if(currentChatsCount >= 1){
+        return res.status(403).json({
+          success: false,
+          message: "Guest users are limited to 1 chat. Please use the existing chat or register for a full experience."
+        })
+      }
+    }
+  
+  
     if (prompt) {
       const titlePrompt = `Summarize this text into a concise chat title (max 5 words), do not use quotes: "${prompt}"`;
-      title = !req.user?.isGuest ? await generateResponse(titlePrompt) : 'guest title';
+      title = !req.user?.isGuest
+        ? await generateResponse(titlePrompt)
+        : "Guest Workspace";
     }
 
     const newChat = chatModel({
@@ -39,10 +55,12 @@ async function createChat(req, res) {
 
 async function getChats(req, res) {
   const user = req.user;
+  const chatLimit = user.isGuest ? 1 : 4;
+  
   const chats = await chatModel
     .find({ user: user._id })
     .sort({ lastActivity: -1 })
-    .limit(4);
+    .limit(chatLimit);
 
   res.status(200).json({
     message: "Chats retrieved successfully",

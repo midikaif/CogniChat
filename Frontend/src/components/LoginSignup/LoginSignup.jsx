@@ -86,7 +86,15 @@ function LoginSignup() {
   const handleGuestLogin = async () => {
     setLoading(true);
     try {
-      const { data } = await api.post("/api/auth/guest");
+      const savedGuest = localStorage.getItem("cognichat_user");
+      let guestIdToPass = null;
+      if(savedGuest){
+        const parsedGuest = JSON.parse(savedGuest);
+        if(parsedGuest.isGuest){
+          guestIdToPass = parsedGuest._id;
+        }
+      }
+      const { data } = await api.post("/api/auth/guest", {guestId: guestIdToPass});
 
       if (data.success) {
         console.log("Guest login data:", data);

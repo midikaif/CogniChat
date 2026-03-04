@@ -2,28 +2,32 @@ import { useContext, useState } from "react";
 import { Context } from "../../Context/ContextProvider";
 import { assets } from "../../assets/assets";
 import "./SearchBar.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function SearchBar() {
   const {
     onSend,
-    selectedChat,
+    chats,
     startChatFromWelcome,
     loadingReply,
     setNotification,
+    user
   } = useContext(Context);
 
   const navigate = useNavigate();
+  const {chatId} = useParams();
   const [input, setInput] = useState("");
+
+  const isGuestLocked = user?.isGuest && chats.length >= 1 && !chatId;
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
 
-    if (!input.trim()) return;
+    if (!input.trim() || isGuestLocked || loadingReply) return;
 
-    if (selectedChat) {
+    if (chatId) {
       // SCENARIO 1: Chat already exists -> Just send message
-      onSend(input, selectedChat);
+      onSend(input, chatId);
     } else {
       // SCENARIO 2: No chat selected (Welcome Page) -> Create new chat
       const newChatId = await startChatFromWelcome(input);
@@ -47,12 +51,13 @@ function SearchBar() {
           type="text"
           onChange={(e) => setInput(e.target.value)}
           value={input}
-          placeholder={
+          placeholder={isGuestLocked ? "Guest limit (1 chat) reached. Open your recent chat." :
             loadingReply
               ? "CogniChat is thinking..."
               : "Type your message here..."
           }
-          disabled={loadingReply}
+          disabled={loadingReply || isGuestLocked}
+          name="submit-btn"
         />
         <div className="search-icon">
           <button type="button" onClick={handleImageClick}>

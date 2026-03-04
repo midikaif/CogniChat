@@ -282,7 +282,7 @@ a {
   padding-right: 10px;
   cursor: pointer;
 }
-.sidebar .bottom-item img {
-  width: 20px;
+.sidebar .bottom-item svg {
+  font-size: 1.5rem;
 }
 

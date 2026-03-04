@@ -10,6 +10,7 @@ import {useEffect} from "react";
 function Home() {
   const {
     selectedChat,
+    setSelectedChat,
     isCreatingChat,
     loadChat,
     setNotification,
@@ -23,6 +24,7 @@ function Home() {
     const validUrlCheck = async () => {
       if (chatId) {
         if (location.state?.justCreated) {
+          setSelectedChat(chatId);
           navigate(location.pathname, { replace: true, state: {} });
           return;
         }
@@ -31,11 +33,13 @@ function Home() {
         if (!isValid) {
           setNotification("The chat you are trying to access does not exist.");
           navigate("/", { replace: true });
+        } else{
+          setSelectedChat(chatId);
         }
       }
     };
     validUrlCheck();
-  }, [chatId]);
+  }, [chatId, setSelectedChat]);
 
   return (
     <div className="main">

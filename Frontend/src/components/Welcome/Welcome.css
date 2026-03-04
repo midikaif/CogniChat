@@ -1,6 +1,6 @@
 .greet {
     margin-bottom: 50px;
-    font-size: clamp(2rem, 6vw, 4.5rem);
+    font-size: clamp(1.25rem, 4vw, 4.5rem);
     color: #c4c7c5;
     font-weight: 500;
 }
@@ -9,4 +9,47 @@
     background: -webkit-linear-gradient(16deg, #4b90ff, #ff5546);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+/* 1. The Container (The Grid/Flexbox that holds the cards) */
+.welcome-card {
+  display: flex;
+  justify-content: flex-start; /* Centers the card, or use flex-start to align left */
+  flex-direction: column;
+  gap: 15px; /* Adds space if you ever show more than one card */
+  margin-top: 3rem;
+  width: 100%;
+}
+
+/* 2. The Resting State (The Tile) */
+.welcome-card-item {
+  background-color: #f9f9f9; /* A very soft gray, not pure white */
+  border: 1px solid #e5e5e5; /* A subtle outline */
+  border-radius: 12px; /* Modern, rounded corners */
+  padding: 1rem 1.75rem;
+  min-width: 8rem;
+  max-width: 12rem;
+  cursor: pointer; /* Turns the mouse into a hand */
+  
+  /* Smoothly animates any changes when the user hovers */
+  transition: all 0.2s ease-in-out; 
+  
+  /* Typography */
+  font-size: 15px;
+  color: #333333;
+  
+  /* Optional: A very tiny shadow to lift it off the background */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* 3. The Interactive State (The Hover) */
+.welcome-card-item:hover {
+  background-color: #f0f0f0; /* Darkens slightly on hover */
+  border-color: #d1d1d1; /* Border gets slightly darker */
+  
+  /* Moves the card up by 2 pixels to make it feel like a physical button */
+  transform: translateY(-2px); 
+  
+  /* Shadow gets slightly larger to match the 'lift' */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); 
 }

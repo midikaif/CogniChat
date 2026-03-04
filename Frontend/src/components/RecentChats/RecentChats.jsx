@@ -10,6 +10,7 @@ function RecentChats({ chats, onDeleteChat }) {
     selectedChat,
     setSelectedChat,
     setExtended,
+    deleteChat
   } = useContext(Context);
 
   const navigate = useNavigate();
@@ -37,7 +38,10 @@ function RecentChats({ chats, onDeleteChat }) {
             <img src={assets.message_icon} alt="message icon" />
             <p>{chat.title}</p>
           </div>
-          <div className="chat-delete" onClick={(e) => onDeleteChat(e, chat._id)}>
+          <div className="chat-delete" onClick={(e) => {
+            deleteChat(e, chat._id);
+            navigate("/");
+            }}>
             <MdDelete opacity={"0.5"} cursor={"pointer"} />
           </div>
         </div>

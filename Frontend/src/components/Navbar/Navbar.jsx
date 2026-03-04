@@ -6,7 +6,7 @@ import { assets } from "../../assets/assets";
 import "./Navbar.css";
 
 function Navbar() {
-  const { setSelectedChat, setUser, setExtended, requestsLeft } =
+  const { setSelectedChat, setUser, setExtended, requestsLeft, setNotification } =
     useContext(Context);
   const [showSignout, setShowSignout] = useState(false);
   const navigate = useNavigate();
@@ -18,6 +18,8 @@ function Navbar() {
     try {
       await api.post("/api/auth/logout");
       setUser(null);
+      setExtended(false);
+      setNotification("Successfully signed out.");
       navigate("/login");
     } catch (err) {
       console.error("Logout failed", err);

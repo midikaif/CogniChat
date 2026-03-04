@@ -25,6 +25,8 @@ const ContextProvider = (props) => {
   const [loadingReply, setLoadingReply] = useState(false);
   const [socket, setSocket] = useState(null);
   const [requestsLeft, setRequestsLeft] = useState(20);
+  const [chats, setChats] = useState([]);
+  const [loadingList, setLoadingList] = useState(true);
   const socketRef = useRef(null);
   const chatCache = useRef({});
 
@@ -33,7 +35,7 @@ const ContextProvider = (props) => {
     if (user) {
       localStorage.setItem("cognichat_user", JSON.stringify(user));
     } else {
-      localStorage.removeItem("cognichat_user");
+      // localStorage.removeItem("cognichat_user");
     }
   }, [user]);
 
@@ -59,16 +61,16 @@ const ContextProvider = (props) => {
               d1.getDate() === d2.getDate()
             );
           };
-          if(isSameDay(data.user.lastRequestDate, Date.now())){
+          if (isSameDay(data.user.lastRequestDate, Date.now())) {
             const left = 20 - data.user.dailyRequests;
-            setRequestsLeft(left); 
+            setRequestsLeft(left);
           }
         }
       } catch (error) {
         // Token expired or invalid? Logout immediately.
         console.log("Session expired", error);
+        !user.isGuest && localStorage.removeItem("cognichat_user");
         setUser(null);
-        localStorage.removeItem("cognichat_user");
       } finally {
         setLoading(false);
       }
@@ -76,49 +78,49 @@ const ContextProvider = (props) => {
 
     // Run this once when the app starts
     verifyUser();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    if(!socket) return;
+    if (!socket) return;
 
-     const handleAiResponse = (message) => {
-       // SECURITY CHECK:
-       // Even if the pipe is shared, we ensure this message belongs to THIS chat.
-       // (Optional but good practice)
-       console.log("Received from backend: ", message);
+    const handleAiResponse = (message) => {
+      // SECURITY CHECK:
+      // Even if the pipe is shared, we ensure this message belongs to THIS chat.
+      // (Optional but good practice)
+      console.log("Received from backend: ", message);
 
-       if (selectedChat && message.chat && message.chat !== selectedChat) {
-         return;
-       }
+      if (selectedChat && message.chat && message.chat !== selectedChat) {
+        return;
+      }
 
-       const newHistory = {
-         role: "model",
-         content: message.content,
-       };
+      const newHistory = {
+        role: "model",
+        content: message.content,
+      };
 
-       setPrevPrompts((prev) => {
-         const updatedHistory = [...prev, newHistory];
+      setPrevPrompts((prev) => {
+        const updatedHistory = [...prev, newHistory];
 
-         if (selectedChat) {
-           chatCache.current[selectedChat] = updatedHistory;
-         }
+        if (selectedChat) {
+          chatCache.current[selectedChat] = updatedHistory;
+        }
 
-         return updatedHistory;
-       });
+        return updatedHistory;
+      });
 
-       setLoadingReply(false);
-     };
+      setLoadingReply(false);
+    };
 
-    const handleError = err => {
+    const handleError = (err) => {
       console.error("Global socket error: ", err);
       setLoadingReply(false);
       setNotification(err.message || "An error occurred. Please try again.");
-    }
+    };
 
-    const handleQuotaUpdate = data => {
+    const handleQuotaUpdate = (data) => {
       const left = data.maxRequests - data.requestsUsed;
       setRequestsLeft(left);
-    }
+    };
 
     socket.on("ai-response", handleAiResponse);
     socket.on("error", handleError);
@@ -128,8 +130,50 @@ const ContextProvider = (props) => {
       socket.off("ai-response", handleAiResponse);
       socket.off("error", handleError);
       socket.off("quota-update", handleQuotaUpdate);
-    }
+    };
   }, [socket, prevPrompts, selectedChat]);
+
+  const fetchRecentChats = async () => {
+    if (!user) {
+      console.log("No user logged in", user);
+      return;
+    }
+
+    try {
+      setLoadingList(true);
+      const response = await api.get("/api/chat");
+      setChats(response.data.chats);
+    } catch (err) {
+      console.error("Error fetching recent chats: ", err);
+      setNotification("Failed to load recent chats.");
+    } finally {
+      setLoadingList(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecentChats();
+  }, []);
+
+  async function deleteChat(e, id) {
+    e.stopPropagation();
+    setChats((prevChats) => prevChats.filter((chat) => chat._id !== id));
+
+    if (selectedChat === id) {
+      setSelectedChat(null);
+      setPrevPrompts([]);
+    }
+
+    setNotification("Chat deleted successfully!");
+    try {
+      await api.delete(`/api/chat/${id}`, { withCredentials: true });
+      await fetchRecentChats();
+    } catch (err) {
+      console.log("Delete failed: ", err);
+    }
+
+    showNotification("");
+  }
 
   const loadChat = async (chatId) => {
     if (chatCache.current[chatId]) {
@@ -141,7 +185,6 @@ const ContextProvider = (props) => {
     console.log(`[API] Fetching chat ${chatId}...`);
 
     try {
-      setLoading(true);
       const response = await api.get(`/api/chat/${chatId}`);
       const freshData = response.data.chat;
 
@@ -162,7 +205,7 @@ const ContextProvider = (props) => {
     chatCache.current[chatId] = updatedHistory;
   };
 
-  const emitToBackend = payload => {
+  const emitToBackend = (payload) => {
     console.log(socketRef.current);
     if (socketRef.current && socketRef.current.connected) {
       socketRef.current.emit("ai-message", payload);
@@ -173,12 +216,12 @@ const ContextProvider = (props) => {
       setSocket(newSocket);
 
       newSocket.once("connect", () => {
-        console.log("Socket connected, payload sending")
+        console.log("Socket connected, payload sending");
         newSocket.emit("ai-message", payload);
-      })
+      });
     }
-  }
-  
+  };
+
   const startChatFromWelcome = async (prompt) => {
     setIsCreatingChat(true);
     setShowResult(true);
@@ -231,6 +274,7 @@ const ContextProvider = (props) => {
       }
     } catch (err) {
       console.error("Error starting chat:", err);
+      setNotification("Failed to start chat. Please try again.");
       setLoadingReply(false);
     }
   };
@@ -322,6 +366,11 @@ const ContextProvider = (props) => {
     chatCache,
     requestsLeft,
     setRequestsLeft,
+    loadingList,
+    setLoadingList,
+    chats,
+    setChats,
+    deleteChat
   };
 
   return (
