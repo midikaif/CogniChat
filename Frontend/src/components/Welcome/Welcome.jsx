@@ -16,15 +16,17 @@ function Welcome() {
         </p>
         <p>How can I help you today?</p>
       </div>
-      {chats.length &&
-      <div className="welcome-card" onClick={()=> navigate(`c/${chats[0]._id}`)}>
-        <div>
-        Recent chat:
+      {chats.length>0 && (
+        <div className="welcome-card">
+          <div>Recent chat:</div>
+          <div
+            className="welcome-card-item"
+            onClick={() => navigate(`c/${chats[0]._id}`)}
+          >
+            {chats[0].title}
+          </div>
         </div>
-        <div className="welcome-card-item" >
-          {chats[0].title}
-        </div>
-      </div>}
+      )}
     </>
   );
 }
