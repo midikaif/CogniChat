@@ -12,6 +12,7 @@ function initSocketServer(httpServer) {
       origin: [
         "http://localhost:5173",
         "https://llmmodel-midikaif.onrender.com",
+        process.env.FRONTEND_URL,
       ],
       credentials: true,
     },
