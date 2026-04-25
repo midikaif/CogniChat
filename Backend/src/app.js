@@ -16,23 +16,20 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://llmmodel-midikaif.onrender.com",
+      process.env.FRONTEND_URL,
     ],
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname,'../public')));
 
 
 
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
 
-app.get('*name', (req,res) => {
-    res.sendFile(path.join(__dirname,'../public/index.html'))
-})
 
 
 module.exports = app;

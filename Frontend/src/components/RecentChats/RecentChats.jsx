@@ -5,12 +5,13 @@ import "./RecentChats.css";
 import { MdDelete } from "react-icons/md";
 import {useNavigate} from "react-router-dom";
 
-function RecentChats({ chats, onDeleteChat }) {
+function RecentChats() {
   const {
     selectedChat,
     setSelectedChat,
     setExtended,
-    deleteChat
+    deleteChat,
+    chats
   } = useContext(Context);
 
   const navigate = useNavigate();

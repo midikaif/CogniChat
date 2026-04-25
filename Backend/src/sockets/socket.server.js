@@ -113,22 +113,6 @@ function initSocketServer(httpServer) {
         // ---------------------------------------------------------
         // 1. CONDITIONAL CONTEXT LOADING (The Optimization) ⚡
         // ---------------------------------------------------------
-        if (isFirstMessage) {
-          // 🚀 FAST PATH: Skip vector generation and DB searching
-          console.log("First message detected. Skipping context search.");
-
-          console.time("Fast_Path");
-          // Just save the message text to DB (Fast)
-          await messageModel.create({
-            chat: chat,
-            user: socket.user._id,
-            content: content,
-            role: "user",
-          });
-          console.timeEnd("Fast_Path");
-        } else {
-          // 🐢 NORMAL PATH: Do the heavy lifting for context
-
           console.time("Message_Vector_Gen");
           // A. Start generating vectors AND saving to DB in parallel
           const [message, vectors] = await Promise.all([
@@ -152,15 +136,14 @@ function initSocketServer(httpServer) {
               limit: 3,
               metadata: { user: socket.user._id },
             }),
+            isFirstMessage ? Promise.resolve([]) :
             messageModel
               .find({ chat: chat })
               .sort({ createdAt: -1 })
               .limit(20)
-              .lean(),
+              .lean()
           ]);
           console.timeEnd("Memory_ChatHistory_Fetch");
-
-          console.log(memory.matches[0].metadata);
 
           if (memory && memory.matches[0]?.score > 0.98) {
             console.log("🟢 CACHE HIT! Bypassing Gemini API.");
@@ -209,7 +192,7 @@ function initSocketServer(httpServer) {
             console.log("LTM Context: ", memoryText);
           }
           console.timeEnd("LTM");
-        }
+        
 
         // ---------------------------------------------------------
         // 2. CONSTRUCT PROMPT & GENERATE 🧠

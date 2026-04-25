@@ -69,7 +69,7 @@ const ContextProvider = (props) => {
       } catch (error) {
         // Token expired or invalid? Logout immediately.
         console.log("Session expired", error);
-        !user.isGuest && localStorage.removeItem("cognichat_user");
+        !user?.isGuest && localStorage.removeItem("cognichat_user");
         setUser(null);
       } finally {
         setLoading(false);
@@ -78,7 +78,7 @@ const ContextProvider = (props) => {
 
     // Run this once when the app starts
     verifyUser();
-  }, [user]);
+  }, [user?._id]);
 
   useEffect(() => {
     if (!socket) return;
@@ -115,6 +115,11 @@ const ContextProvider = (props) => {
       console.error("Global socket error: ", err);
       setLoadingReply(false);
       setNotification(err.message || "An error occurred. Please try again.");
+      setPrevPrompts((prev) => {
+        if(prev[prev.length - 1].role === "user"){
+          return prev.slice(0, -1);
+        }
+      })
     };
 
     const handleQuotaUpdate = (data) => {
@@ -153,7 +158,7 @@ const ContextProvider = (props) => {
 
   useEffect(() => {
     fetchRecentChats();
-  }, []);
+  }, [user?._id]);
 
   async function deleteChat(e, id) {
     e.stopPropagation();
