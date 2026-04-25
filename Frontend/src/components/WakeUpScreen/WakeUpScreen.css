@@ -1,0 +1,354 @@
+.wakeup-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #111827;
+  color: #e5e7eb;
+  padding: 1rem;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .wakeup-container {
+    padding: 2rem;
+  }
+}
+
+.wakeup-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 56rem;
+}
+
+.wakeup-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #60a5fa;
+  margin-bottom: 1rem;
+  animation: wakeupPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@media (min-width: 768px) {
+  .wakeup-title {
+    font-size: 2.25rem;
+  }
+}
+
+.wakeup-status {
+  font-size: 1.125rem;
+  font-family: monospace;
+  color: #4ade80;
+  min-height: 30px;
+}
+
+@media (min-width: 768px) {
+  .wakeup-status {
+    font-size: 1.25rem;
+  }
+}
+
+.wakeup-cursor {
+  font-weight: bold;
+  margin-left: 0.25rem;
+  animation: wakeupPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.wakeup-note {
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.wakeup-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 64rem;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.wakeup-tab-btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  font-weight: bold;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+  border: none;
+  border-bottom: 4px solid transparent;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.wakeup-tab-btn.active {
+  background-color: #1f2937;
+  border-bottom-color: #3b82f6;
+  color: #ffffff;
+}
+
+.wakeup-tab-btn.inactive {
+  background-color: transparent;
+  color: #6b7280;
+}
+
+.wakeup-tab-btn.inactive:hover {
+  color: #d1d5db;
+}
+
+.wakeup-content-area {
+  width: 100%;
+  max-width: 64rem;
+  background-color: #1f2937;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid #374151;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 500px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .wakeup-content-area {
+    flex-direction: row;
+  }
+}
+
+.wakeup-overview {
+  padding: 1.5rem;
+  width: 100%;
+  animation: wakeupFadeIn 0.5s ease-in-out;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .wakeup-overview {
+    padding: 2.5rem;
+  }
+}
+
+.wakeup-overview-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+}
+
+.wakeup-overview-desc {
+  color: #d1d5db;
+  margin-bottom: 2.5rem;
+  font-size: 1.125rem;
+  line-height: 1.625;
+  max-width: 56rem;
+}
+
+.wakeup-features-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #60a5fa;
+  margin-bottom: 1.5rem;
+}
+
+.wakeup-features-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .wakeup-features-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.wakeup-feature-item {
+  display: flex;
+  align-items: center;
+  color: #d1d5db;
+  background-color: rgba(17, 24, 39, 0.5);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(55, 65, 81, 0.5);
+}
+
+.wakeup-feature-icon {
+  color: #4ade80;
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.wakeup-sidebar {
+  width: 100%;
+  background-color: #1f2937;
+  border-right: 1px solid #374151;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .wakeup-sidebar {
+    width: 33.333333%;
+  }
+}
+
+.wakeup-sidebar-scroll {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.wakeup-challenge-btn {
+  width: 100%;
+  text-align: left;
+  padding: 1.25rem;
+  border: none;
+  border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+  cursor: pointer;
+  display: block;
+}
+
+.wakeup-challenge-btn.active {
+  background-color: rgba(37, 99, 235, 0.2);
+  border-left: 4px solid #3b82f6;
+  color: #ffffff;
+}
+
+.wakeup-challenge-btn.inactive {
+  background-color: transparent;
+  border-left: 4px solid transparent;
+  color: #9ca3af;
+}
+
+.wakeup-challenge-btn.inactive:hover {
+  background-color: rgba(55, 65, 81, 0.5);
+}
+
+.wakeup-challenge-log-label {
+  display: block;
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: #60a5fa;
+  margin-bottom: 0.25rem;
+}
+
+.wakeup-challenge-btn-title {
+  font-weight: 600;
+}
+
+.wakeup-challenge-content {
+  width: 100%;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: rgba(31, 41, 55, 0.5);
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .wakeup-challenge-content {
+    width: 66.666667%;
+    padding: 2rem;
+  }
+}
+
+.wakeup-challenge-details {
+  animation: wakeupFadeIn 0.5s ease-in-out;
+}
+
+.wakeup-challenge-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+}
+
+.wakeup-challenge-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+  .wakeup-challenge-text {
+    font-size: 1rem;
+  }
+}
+
+.wakeup-challenge-text p {
+  margin: 0;
+  color: #e5e7eb;
+}
+
+.wakeup-label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.wakeup-label-hook {
+  color: #c084fc;
+}
+.wakeup-label-rising {
+  color: #60a5fa;
+}
+.wakeup-label-conflict {
+  color: #f87171;
+}
+.wakeup-label-action {
+  color: #fb923c;
+}
+
+.wakeup-reward-box {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: rgba(20, 83, 45, 0.2);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 0.5rem;
+}
+
+.wakeup-reward-label {
+  font-weight: bold;
+  color: #4ade80;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.wakeup-reward-text {
+  color: #dcfce7;
+}
+
+@keyframes wakeupPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes wakeupFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

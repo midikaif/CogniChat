@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import api from "../apis/api";
+import api from "../../apis/api";
+import "./WakeUpScreen.css";
 
 const WakeUpScreen = ({ onReady }) => {
   const [text, setText] = useState("");
@@ -129,40 +130,34 @@ const WakeUpScreen = ({ onReady }) => {
   }, [onReady]);
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-900 text-gray-200 p-4 md:p-8 font-sans">
+    <div className="wakeup-container">
       {/* Header / Loading Indicator */}
-      <div className="text-center mb-8 w-full max-w-4xl">
-        <h1 className="text-3xl md:text-4xl font-bold text-blue-400 mb-4 animate-pulse">
-          Starting CogniChat API...
-        </h1>
-        <div className="text-lg md:text-xl font-mono text-green-400 min-h-[30px]">
+      <div className="wakeup-header">
+        <h1 className="wakeup-title">Starting CogniChat API...</h1>
+        <div className="wakeup-status">
           {text}
-          <span className="animate-pulse font-bold ml-1">|</span>
+          <span className="wakeup-cursor">|</span>
         </div>
-        <p className="mt-4 text-xs text-gray-500">
+        <p className="wakeup-note">
           (The free-tier backend is spinning up. While you wait, explore the
           architecture below!)
         </p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex space-x-4 mb-6 w-full max-w-5xl px-4">
+      <div className="wakeup-tabs">
         <button
           onClick={() => setActiveTab("overview")}
-          className={`px-6 py-2 rounded-t-lg font-bold transition-colors border-b-4 ${
-            activeTab === "overview"
-              ? "bg-gray-800 border-blue-500 text-white"
-              : "bg-transparent border-transparent text-gray-500 hover:text-gray-300"
+          className={`wakeup-tab-btn ${
+            activeTab === "overview" ? "active" : "inactive"
           }`}
         >
           Project Overview
         </button>
         <button
           onClick={() => setActiveTab("challenges")}
-          className={`px-6 py-2 rounded-t-lg font-bold transition-colors border-b-4 ${
-            activeTab === "challenges"
-              ? "bg-gray-800 border-blue-500 text-white"
-              : "bg-transparent border-transparent text-gray-500 hover:text-gray-300"
+          className={`wakeup-tab-btn ${
+            activeTab === "challenges" ? "active" : "inactive"
           }`}
         >
           Engineering Logs
@@ -170,27 +165,17 @@ const WakeUpScreen = ({ onReady }) => {
       </div>
 
       {/* Interactive Content Area */}
-      <div className="w-full max-w-5xl bg-gray-800 rounded-xl shadow-2xl border border-gray-700 overflow-hidden flex flex-col md:flex-row min-h-[500px]">
+      <div className="wakeup-content-area">
         {activeTab === "overview" ? (
           /* --- Project Overview Tab --- */
-          <div className="p-6 md:p-10 w-full animate-fadeIn">
-            <h2 className="text-3xl font-bold text-white mb-6">
-              {projectDetails.title}
-            </h2>
-            <p className="text-gray-300 mb-10 text-lg leading-relaxed max-w-4xl">
-              {projectDetails.description}
-            </p>
-            <h3 className="text-xl font-bold text-blue-400 mb-6">
-              Core Features
-            </h3>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="wakeup-overview">
+            <h2 className="wakeup-overview-title">{projectDetails.title}</h2>
+            <p className="wakeup-overview-desc">{projectDetails.description}</p>
+            <h3 className="wakeup-features-title">Core Features</h3>
+            <ul className="wakeup-features-list">
               {projectDetails.features.map((feature, idx) => (
-                <li
-                  key={idx}
-                  className="flex items-center text-gray-300 bg-gray-900/50 p-4 rounded-lg border border-gray-700/50"
-                >
-                  <span className="text-green-400 mr-3 text-xl">✔</span>{" "}
-                  {feature}
+                <li key={idx} className="wakeup-feature-item">
+                  <span className="wakeup-feature-icon">✔</span> {feature}
                 </li>
               ))}
             </ul>
@@ -199,64 +184,62 @@ const WakeUpScreen = ({ onReady }) => {
           /* --- Engineering Logs Tab --- */
           <>
             {/* Left Sidebar - Navigation */}
-            <div className="w-full md:w-1/3 bg-gray-800 border-r border-gray-700 flex flex-col">
-              <div className="flex-grow overflow-y-auto">
+            <div className="wakeup-sidebar">
+              <div className="wakeup-sidebar-scroll">
                 {challenges.map((challenge, idx) => (
                   <button
                     key={idx}
                     onClick={() => setActiveChallenge(idx)}
-                    className={`w-full text-left p-5 border-b border-gray-700/50 transition-colors duration-200 ${
-                      activeChallenge === idx
-                        ? "bg-blue-600/20 border-l-4 border-l-blue-500 text-white"
-                        : "hover:bg-gray-700/50 text-gray-400"
+                    className={`wakeup-challenge-btn ${
+                      activeChallenge === idx ? "active" : "inactive"
                     }`}
                   >
-                    <span className="block text-xs font-mono text-blue-400 mb-1">
+                    <span className="wakeup-challenge-log-label">
                       LOG #{idx + 1}
                     </span>
-                    <span className="font-semibold">{challenge.title}</span>
+                    <span className="wakeup-challenge-btn-title">
+                      {challenge.title}
+                    </span>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Right Content Area - Challenge Details */}
-            <div className="w-full md:w-2/3 p-6 md:p-8 flex flex-col justify-center bg-gray-800/50">
-              <div className="animate-fadeIn">
-                <h2 className="text-2xl font-bold text-white mb-6">
+            <div className="wakeup-challenge-content">
+              <div className="wakeup-challenge-details">
+                <h2 className="wakeup-challenge-title">
                   {challenges[activeChallenge].title}
                 </h2>
 
-                <div className="space-y-4 text-sm md:text-base">
+                <div className="wakeup-challenge-text">
                   <p>
-                    <span className="font-bold text-purple-400 block mb-1">
+                    <span className="wakeup-label wakeup-label-hook">
                       The Hook:
                     </span>
                     {challenges[activeChallenge].hook}
                   </p>
                   <p>
-                    <span className="font-bold text-blue-400 block mb-1">
+                    <span className="wakeup-label wakeup-label-rising">
                       Rising Action:
                     </span>
                     {challenges[activeChallenge].risingAction}
                   </p>
                   <p>
-                    <span className="font-bold text-red-400 block mb-1">
+                    <span className="wakeup-label wakeup-label-conflict">
                       The Conflict:
                     </span>
                     {challenges[activeChallenge].conflict}
                   </p>
                   <p>
-                    <span className="font-bold text-orange-400 block mb-1">
+                    <span className="wakeup-label wakeup-label-action">
                       The Action:
                     </span>
                     {challenges[activeChallenge].action}
                   </p>
-                  <div className="mt-6 p-4 bg-green-900/20 border border-green-500/30 rounded-lg">
-                    <span className="font-bold text-green-400 block mb-1">
-                      The Reward:
-                    </span>
-                    <span className="text-green-100">
+                  <div className="wakeup-reward-box">
+                    <span className="wakeup-reward-label">The Reward:</span>
+                    <span className="wakeup-reward-text">
                       {challenges[activeChallenge].reward}
                     </span>
                   </div>

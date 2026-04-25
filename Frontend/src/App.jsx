@@ -1,6 +1,11 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 // Imports
 import MainLayout from "./layouts/MainLayout";
@@ -10,9 +15,15 @@ import LoginSignup from "./components/LoginSignup/LoginSignup";
 import Loader from "./components/Loader/Loader";
 import { Context } from "./Context/ContextProvider";
 import Chats from "./components/Chats/Chats";
+import WakeUpScreen from "./components/WakeUpScreen/WakeUpScreen";
 
 function App() {
-  const { loading, user} = useContext(Context);
+  const { loading, user } = useContext(Context);
+  const [isServerAwake, setIsServerAwake] = useState(false);
+
+  if (!isServerAwake) {
+    return <WakeUpScreen onReady={() => setIsServerAwake(true)} />;
+  }
 
   return (
     <>
